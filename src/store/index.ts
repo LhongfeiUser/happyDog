@@ -5,6 +5,7 @@ import servicesReducer from './slices/servicesSlice';
 import ordersReducer from './slices/ordersSlice';
 import reviewsReducer from './slices/reviewsSlice';
 import afterSalesReducer from './slices/afterSalesSlice';
+import statisticsReducer from './slices/statisticsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     orders: ordersReducer,
     reviews: reviewsReducer,
     afterSales: afterSalesReducer,
+    statistics: statisticsReducer,
   },
 });
 
