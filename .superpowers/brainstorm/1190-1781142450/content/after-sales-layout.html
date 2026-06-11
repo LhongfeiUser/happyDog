@@ -1,0 +1,93 @@
+<h2>售后页面布局</h2>
+<p class="subtitle">退款、取消、投诉</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>表单提交</h3>
+      <p>选择售后类型，填写原因和说明，上传凭证</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>向导流程</h3>
+      <p>分步引导用户完成售后申请，清晰明了</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>对话式</h3>
+      <p>模拟客服对话，引导用户描述问题</p>
+    </div>
+  </div>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">预览：售后申请</div>
+  <div class="mockup-body">
+    <div style="padding: 20px;">
+      <!-- 订单信息 -->
+      <div style="background: #FFF3E0; border-radius: 16px; padding: 16px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="width: 60px; height: 60px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🧼</div>
+          <div style="flex: 1;">
+            <div style="font-weight: bold;">基础洗护服务</div>
+            <div style="color: #666;">订单号：PET20240115001</div>
+            <div style="color: #666;">金额：¥68</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 售后类型选择 -->
+      <h3 style="margin-bottom: 16px;">选择售后类型</h3>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+        <div style="border: 2px solid #FF6B35; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
+          <div style="font-size: 32px; margin-bottom: 8px;">💰</div>
+          <div style="font-weight: bold;">申请退款</div>
+          <div style="color: #666; font-size: 14px; margin-top: 4px;">服务未开始可全额退款</div>
+        </div>
+        <div style="border: 2px solid #eee; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
+          <div style="font-size: 32px; margin-bottom: 8px;">❌</div>
+          <div style="font-weight: bold;">取消订单</div>
+          <div style="color: #666; font-size: 14px; margin-top: 4px;">取消未完成的订单</div>
+        </div>
+        <div style="border: 2px solid #eee; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
+          <div style="font-size: 32px; margin-bottom: 8px;">📢</div>
+          <div style="font-weight: bold;">投诉商家</div>
+          <div style="color: #666; font-size: 14px; margin-top: 4px;">对服务不满意可投诉</div>
+        </div>
+      </div>
+
+      <!-- 退款原因 -->
+      <h3 style="margin-bottom: 16px;">退款原因</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;">
+        <div style="padding: 8px 16px; background: #FF6B35; color: white; border-radius: 20px;">服务不满意</div>
+        <div style="padding: 8px 16px; background: #f5f5f5; border-radius: 20px;">时间冲突</div>
+        <div style="padding: 8px 16px; background: #f5f5f5; border-radius: 20px;">宠物不适</div>
+        <div style="padding: 8px 16px; background: #f5f5f5; border-radius: 20px;">商家原因</div>
+        <div style="padding: 8px 16px; background: #f5f5f5; border-radius: 20px;">其他</div>
+      </div>
+
+      <!-- 详细说明 -->
+      <h3 style="margin-bottom: 16px;">详细说明</h3>
+      <textarea style="width: 100%; height: 100px; padding: 12px; border: 2px solid #eee; border-radius: 12px; resize: none;" placeholder="请详细描述您的问题..."></textarea>
+
+      <!-- 上传凭证 -->
+      <h3 style="margin-top: 24px; margin-bottom: 16px;">上传凭证</h3>
+      <div style="display: flex; gap: 12px;">
+        <div style="width: 100px; height: 100px; border: 2px dashed #FF6B35; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #FF6B35; cursor: pointer;">
+          <div style="font-size: 24px;">📷</div>
+          <div style="font-size: 12px;">添加图片</div>
+        </div>
+      </div>
+
+      <!-- 提交按钮 -->
+      <div style="text-align: center; margin-top: 32px;">
+        <button class="mock-button" style="background: #FF6B35; color: white; padding: 14px 64px; border-radius: 24px; font-size: 16px;">提交申请</button>
+      </div>
+    </div>
+  </div>
+</div>

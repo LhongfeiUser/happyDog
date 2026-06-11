@@ -1,0 +1,81 @@
+<h2>登录/注册页面布局</h2>
+<p class="subtitle">手机号+密码登录/注册</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>居中卡片</h3>
+      <p>页面中央显示登录卡片，背景可放宠物图片，简洁美观</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>分屏设计</h3>
+      <p>左侧品牌展示区，右侧登录表单，视觉效果丰富</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>全屏背景</h3>
+      <p>全屏宠物背景图，登录表单悬浮，沉浸式体验</p>
+    </div>
+  </div>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">预览：登录页面</div>
+  <div class="mockup-body">
+    <div style="display: flex; height: 400px; background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%); border-radius: 12px;">
+      <!-- 左侧品牌区 -->
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px;">
+        <div style="font-size: 64px;">🐾</div>
+        <h2 style="margin-top: 16px; color: #FF6B35;">宠物乐园</h2>
+        <p style="margin-top: 8px; color: #666;">您身边的宠物服务专家</p>
+        <div style="display: flex; gap: 16px; margin-top: 24px;">
+          <div style="text-align: center;">
+            <div style="font-size: 24px;">🧼</div>
+            <div style="font-size: 12px;">专业洗护</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 24px;">✂️</div>
+            <div style="font-size: 12px;">精致美容</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 24px;">🏠</div>
+            <div style="font-size: 12px;">温馨寄养</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧登录表单 -->
+      <div style="width: 400px; background: white; border-radius: 0 16px 16px 0; padding: 40px; display: flex; flex-direction: column; justify-content: center;">
+        <h2 style="margin-bottom: 8px;">欢迎回来</h2>
+        <p style="color: #666; margin-bottom: 24px;">请登录您的账号</p>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: bold;">手机号</label>
+          <input class="mock-input" style="width: 100%; padding: 12px; border-radius: 8px;" placeholder="请输入手机号">
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: bold;">密码</label>
+          <input class="mock-input" type="password" style="width: 100%; padding: 12px; border-radius: 8px;" placeholder="请输入密码">
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <label><input type="checkbox"> 记住我</label>
+          <a href="#" style="color: #FF6B35;">忘记密码？</a>
+        </div>
+
+        <button class="mock-button" style="width: 100%; padding: 12px; background: #FF6B35; color: white; border-radius: 24px; font-size: 16px;">登录</button>
+
+        <p style="text-align: center; margin-top: 24px; color: #666;">
+          还没有账号？ <a href="#" style="color: #FF6B35;">立即注册</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

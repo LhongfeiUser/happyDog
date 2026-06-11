@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:3000/api/services)",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/login -H \"Content-Type: application/json\" -d '{\"phone\":\"13800138000\",\"password\":\"123456\"}')",
+      "Bash(pkill -f \"node index.js\")",
+      "Bash(pkill -f \"vite\")",
+      "Bash(node index.js)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'feat: 初始化宠物服务平台项目 *)",
+      "Bash(git config *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(mv .claude pet-service-platform/ && mv .superpowers pet-service-platform/ && mv docs pet-service-platform/)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\EDY\\Desktop\\lhf\\.claude"
+    ]
+  }
+}
