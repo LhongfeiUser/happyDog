@@ -14,6 +14,8 @@ import Pets from './pages/Pets';
 import Profile from './pages/Profile';
 import Reviews from './pages/Reviews';
 import { AfterSalesList } from './pages/AfterSales';
+import Feeding from './pages/Feeding';
+import Statistics from './pages/Statistics';
 import { useAuth } from './hooks';
 import './styles/global.css';
 
@@ -96,6 +98,15 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <AfterSalesList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="feeding/:id" element={<Feeding />} />
+              <Route
+                path="statistics"
+                element={
+                  <ProtectedRoute>
+                    <Statistics />
                   </ProtectedRoute>
                 }
               />

@@ -1,5 +1,7 @@
 import React from 'react';
-import { Card, Tag } from 'antd';
+import { Card, Tag, Typography } from 'antd';
+
+const { Text } = Typography;
 
 interface RankItem {
   id: string;
@@ -17,6 +19,14 @@ export const RankList: React.FC<RankListProps> = ({
   data,
   maxItems = 6,
 }) => {
+  if (!data || data.length === 0) {
+    return (
+      <Card style={{ borderRadius: 12, textAlign: 'center', padding: '40px 0' }}>
+        <Text type="secondary">暂无数据</Text>
+      </Card>
+    );
+  }
+
   const displayData = data.slice(0, maxItems);
 
   return (
@@ -53,7 +63,7 @@ export const RankList: React.FC<RankListProps> = ({
                 <Tag color="blue">{item.salesCount} 单</Tag>
               </div>
               <div style={{ marginTop: 8 }}>
-                <span type="secondary">¥{(item.price / 100).toFixed(2)}</span>
+                <Text type="secondary">¥{(item.price / 100).toFixed(2)}</Text>
               </div>
             </div>
           </div>

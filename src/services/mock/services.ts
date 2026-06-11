@@ -87,6 +87,7 @@ export const getServiceCategories = async (): Promise<ApiResponse<{ category: st
     { category: 'wash', count: 0, label: '洗护' },
     { category: 'grooming', count: 0, label: '美容' },
     { category: 'boarding', count: 0, label: '寄养' },
+    { category: 'feeding', count: 0, label: '上门喂养' },
   ];
 
   mockServices.forEach(s => {

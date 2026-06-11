@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu, Button, Avatar, Dropdown, Space } from 'antd';
-import { UserOutlined, LogoutOutlined, HomeOutlined, ShoppingOutlined, HeartOutlined, StarOutlined, CustomerServiceOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined, HomeOutlined, ShoppingOutlined, HeartOutlined, StarOutlined, CustomerServiceOutlined, BarChartOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth, useAppDispatch } from '../../hooks';
 import { logoutAsync } from '../../store/slices/authSlice';
@@ -43,6 +43,11 @@ const Header: React.FC = () => {
       key: '/after-sales',
       icon: <CustomerServiceOutlined />,
       label: '售后',
+    },
+    {
+      key: '/statistics',
+      icon: <BarChartOutlined />,
+      label: '数据统计',
     },
   ];
 

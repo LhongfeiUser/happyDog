@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Typography, Card, Button, Spin } from 'antd';
-import { ShoppingOutlined, HeartOutlined, StarOutlined, RightOutlined } from '@ant-design/icons';
+import { ShoppingOutlined, HeartOutlined, StarOutlined, RightOutlined, HomeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getRecommendServicesAsync, getServiceCategoriesAsync } from '../../store/slices/servicesSlice';
@@ -22,12 +22,14 @@ const Home: React.FC = () => {
     wash: <ShoppingOutlined style={{ fontSize: 40, color: '#2196F3' }} />,
     grooming: <StarOutlined style={{ fontSize: 40, color: '#9C27B0' }} />,
     boarding: <HeartOutlined style={{ fontSize: 40, color: '#FF9800' }} />,
+    feeding: <HomeOutlined style={{ fontSize: 40, color: '#4CAF50' }} />,
   };
 
   const categoryColors: Record<string, string> = {
     wash: '#E3F2FD',
     grooming: '#F3E5F5',
     boarding: '#FFF3E0',
+    feeding: '#E8F5E9',
   };
 
   return (

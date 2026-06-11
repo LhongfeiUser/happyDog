@@ -50,7 +50,7 @@ export interface Service {
   id: string;
   merchantId: string;
   name: string;
-  category: 'wash' | 'grooming' | 'boarding';
+  category: 'wash' | 'grooming' | 'boarding' | 'feeding';
   description: string;
   price: number;
   duration: number;
@@ -170,4 +170,51 @@ export interface CreateAfterSalesRequest {
   reason: string;
   description: string;
   images?: string[];
+}
+
+// 数据统计类型
+export interface StatisticsData {
+  totalUsers: number;
+  totalOrders: number;
+  totalRevenue: number;
+  averageRating: number;
+  serviceCategories: {
+    category: string;
+    name: string;
+    icon: string;
+    orderCount: number;
+    percentage: number;
+  }[];
+  topServices: {
+    id: string;
+    name: string;
+    price: number;
+    salesCount: number;
+  }[];
+  monthlyTrend: {
+    month: string;
+    orders: number;
+  }[];
+  userAnalysis: {
+    newUsers: number;
+    activeUsers: number;
+    repeatUsers: number;
+  };
+  ratingDistribution: {
+    rating: number;
+    count: number;
+    percentage: number;
+  }[];
+  petTypes: {
+    type: string;
+    name: string;
+    icon: string;
+    count: number;
+    percentage: number;
+  }[];
+  timeSlots: {
+    period: string;
+    orders: number;
+    percentage: number;
+  }[];
 }
