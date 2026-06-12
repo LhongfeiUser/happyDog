@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getStatistics as getStatisticsApi } from '../../services/api/statistics';
 import type { StatisticsData } from '../../types';
+import { statistics } from '../../services/api';
 
 interface StatisticsState {
   data: StatisticsData | null;
@@ -21,8 +21,11 @@ export const getStatisticsAsync = createAsyncThunk(
   'statistics/getStatistics',
   async (_, { rejectWithValue }) => {
     try {
-      const data = await getStatisticsApi();
-      return data;
+      const response = await statistics.getStatistics();
+      if (response.code !== 0) {
+        return rejectWithValue(response.message);
+      }
+      return response.data;
     } catch (error) {
       if (error instanceof Error) {
         return rejectWithValue(error.message);

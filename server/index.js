@@ -1096,6 +1096,151 @@ app.put('/api/after-sales/:id/cancel', authMiddleware, (req, res) => {
   });
 });
 
+// ==================== 数据统计接口 ====================
+
+// 获取数据统计
+app.get('/api/statistics', authMiddleware, (req, res) => {
+  // 服务分类统计
+  const serviceCategories = [
+    { category: 'wash', name: '洗护', icon: '🛁', orderCount: 0, percentage: 0 },
+    { category: 'grooming', name: '美容', icon: '✂️', orderCount: 0, percentage: 0 },
+    { category: 'boarding', name: '寄养', icon: '🏠', orderCount: 0, percentage: 0 },
+    { category: 'feeding', name: '上门喂养', icon: '🍽️', orderCount: 0, percentage: 0 },
+  ];
+
+  data.orders.forEach((o) => {
+    const cat = serviceCategories.find((c) => c.category === o.serviceCategory);
+    if (cat) cat.orderCount++;
+  });
+
+  const totalOrders = data.orders.length;
+  serviceCategories.forEach((c) => {
+    c.percentage = totalOrders > 0 ? Math.round((c.orderCount / totalOrders) * 100) : 0;
+  });
+
+  // 热门服务排行
+  const salesMap = {};
+  data.orders.forEach((o) => {
+    if (!salesMap[o.serviceId]) {
+      const service = data.services.find((s) => s.id === o.serviceId);
+      salesMap[o.serviceId] = {
+        id: o.serviceId,
+        name: o.serviceName,
+        price: service?.price ?? o.totalPrice, // 优先取服务原价，兜底用订单金额
+        salesCount: 0,
+      };
+    }
+    salesMap[o.serviceId].salesCount++;
+  });
+  const topServices = Object.values(salesMap)
+    .sort((a, b) => b.salesCount - a.salesCount)
+    .slice(0, 6);
+
+  // 月度订单趋势（最近8个月）
+  const monthlyTrend = [];
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const now = new Date();
+  for (let i = 7; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const count = data.orders.filter((o) => o.createTime.startsWith(monthKey)).length;
+    monthlyTrend.push({ month: monthNames[d.getMonth()], orders: count });
+  }
+
+  // 用户分析
+  const totalUsers = data.users.length;
+  const activeUsers = new Set(data.orders.map((o) => o.userId)).size;
+  const userOrderCounts = {};
+  data.orders.forEach((o) => {
+    userOrderCounts[o.userId] = (userOrderCounts[o.userId] || 0) + 1;
+  });
+  const repeatUsers = Object.values(userOrderCounts).filter((c) => c > 1).length;
+  const newUsers = totalUsers - activeUsers;
+
+  // 评分分布
+  const ratingDistribution = [
+    { rating: 5, count: 0, percentage: 0 },
+    { rating: 4, count: 0, percentage: 0 },
+    { rating: 3, count: 0, percentage: 0 },
+    { rating: 2, count: 0, percentage: 0 },
+    { rating: 1, count: 0, percentage: 0 },
+  ];
+  let totalRating = 0;
+  let totalReviews = 0;
+  data.reviews.forEach((r) => {
+    const item = ratingDistribution.find((item) => item.rating === r.rating);
+    if (item) item.count++;
+    totalRating += r.rating;
+    totalReviews++;
+  });
+  ratingDistribution.forEach((r) => {
+    r.percentage = totalReviews > 0 ? Math.round((r.count / totalReviews) * 100) : 0;
+  });
+
+  // 宠物类型分布
+  const petTypesMap = {
+    dog: { type: 'dog', name: '狗狗', icon: '🐕', count: 0, percentage: 0 },
+    cat: { type: 'cat', name: '猫咪', icon: '🐈', count: 0, percentage: 0 },
+    other: { type: 'other', name: '其他', icon: '🐰', count: 0, percentage: 0 },
+  };
+  let totalPets = 0;
+  data.pets.forEach((p) => {
+    if (petTypesMap[p.species]) {
+      petTypesMap[p.species].count++;
+      totalPets++;
+    }
+  });
+  Object.values(petTypesMap).forEach((t) => {
+    t.percentage = totalPets > 0 ? Math.round((t.count / totalPets) * 100) : 0;
+  });
+  const petTypes = Object.values(petTypesMap);
+
+  // 服务时段分析
+  const timeSlots = [
+    { period: '上午', orders: 0, percentage: 0 },
+    { period: '下午', orders: 0, percentage: 0 },
+    { period: '晚上', orders: 0, percentage: 0 },
+  ];
+  data.orders.forEach((o) => {
+    const hour = parseInt(o.appointmentTime?.split(':')[0] || '0');
+    if (hour >= 6 && hour < 12) timeSlots[0].orders++;
+    else if (hour >= 12 && hour < 18) timeSlots[1].orders++;
+    else timeSlots[2].orders++;
+  });
+  timeSlots.forEach((s) => {
+    s.percentage = totalOrders > 0 ? Math.round((s.orders / totalOrders) * 100) : 0;
+  });
+
+  // 总收入
+  const totalRevenue = data.orders.reduce((sum, o) => sum + o.totalPrice, 0);
+
+  // 平均评分
+  const averageRating = totalReviews > 0 ? parseFloat((totalRating / totalReviews).toFixed(1)) : 0;
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: {
+      totalUsers,
+      totalOrders,
+      totalRevenue,
+      averageRating,
+      serviceCategories,
+      topServices,
+      monthlyTrend,
+      userAnalysis: {
+        newUsers: Math.max(0, newUsers),
+        activeUsers,
+        repeatUsers,
+      },
+      ratingDistribution,
+      petTypes,
+      timeSlots,
+    },
+    timestamp: Date.now(),
+  });
+});
+
 // 启动服务器
 app.listen(PORT, () => {
   console.log(`🐾 宠物服务平台后端服务已启动`);
@@ -1112,4 +1257,5 @@ app.listen(PORT, () => {
   console.log(`   - GET  /api/orders - 获取订单列表`);
   console.log(`   - POST /api/reviews - 提交评价`);
   console.log(`   - POST /api/after-sales - 提交售后申请`);
+  console.log(`   - GET  /api/statistics - 获取数据统计`);
 });

@@ -2,6 +2,7 @@
 // 当前使用真实API（Node.js后端）
 
 import { authApi, petsApi, servicesApi, ordersApi, reviewsApi, afterSalesApi } from '../real';
+import { getStatistics } from './statistics';
 
 // 认证API
 export const auth = {
@@ -53,4 +54,9 @@ export const afterSales = {
   getUserList: afterSalesApi.getUserAfterSales,
   getById: afterSalesApi.getAfterSalesById,
   cancel: afterSalesApi.cancelAfterSales,
+};
+
+// 数据统计API
+export const statistics = {
+  getStatistics,
 };
