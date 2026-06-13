@@ -147,7 +147,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ form, initialValues, onFinish
         label="服务图片"
         tooltip="最多可上传5张图片，单张图片不超过2MB"
       >
-        <Upload {...uploadProps} fileList={initialValues?.images?.map((url: string) => ({ url, name: url })) || []}>
+        <Upload {...uploadProps} fileList={initialValues?.images?.map((url: string) => ({ url, name: url, uid: url })) || []}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 0' }}>
             <PlusOutlined style={{ fontSize: 24, color: '#999' }} />
             <div style={{ marginTop: 8, color: '#999' }}>上传图片</div>

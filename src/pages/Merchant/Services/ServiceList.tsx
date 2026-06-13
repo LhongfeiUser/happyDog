@@ -4,7 +4,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
-  MoreOutlined,
+  
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { deleteServiceAsync, updateServiceStatusAsync } from '../../../store/slices/merchantServicesSlice';

@@ -69,7 +69,7 @@ const OrderList: React.FC<OrderListProps> = ({
 
     setRejectLoading(true);
     try {
-      await dispatch(rejectOrderAsync({ orderId: rejectOrderId, reason: rejectReason })).unwrap();
+      await dispatch(rejectOrderAsync({ id: rejectOrderId, reason: rejectReason })).unwrap();
       message.success('已拒绝订单');
       setRejectModalVisible(false);
       setRejectOrderId(null);

@@ -11,7 +11,7 @@ const { RangePicker } = DatePicker;
 
 const Orders: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { list, loading, total, error, statusFilter } = useAppSelector((state) => state.merchantOrders);
+  const { list, loading, error, statusFilter } = useAppSelector((state) => state.merchantOrders);
 
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
@@ -77,7 +77,7 @@ const Orders: React.FC = () => {
   };
 
   // 使用useMemo缓存统计数据
-  const { pendingAcceptCount, acceptedCount, inProgressCount, completedCount, totalRevenue } = useMemo(() => ({
+  const { pendingAcceptCount, acceptedCount, inProgressCount, completedCount } = useMemo(() => ({
     pendingAcceptCount: list.filter((o) => o.status === 'pending_accept').length,
     acceptedCount: list.filter((o) => o.status === 'accepted').length,
     inProgressCount: list.filter((o) => o.status === 'in_progress').length,
