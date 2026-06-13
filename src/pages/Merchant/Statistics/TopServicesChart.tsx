@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Empty } from 'antd';
-import { ReactECharts } from '../../../components/SimpleChart';
+import { SimpleChart } from '../../../components/common/SimpleChart';
 import type { EChartsOption } from 'echarts';
 
 interface TopServicesData {
@@ -183,7 +183,7 @@ const TopServicesChart: React.FC<TopServicesChartProps> = ({ data, loading = fal
           />
         </div>
       ) : (
-        <ReactECharts
+        <SimpleChart
           option={option}
           height={400}
           loading={loading}

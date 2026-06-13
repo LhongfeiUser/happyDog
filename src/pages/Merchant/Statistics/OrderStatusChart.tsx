@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from 'antd';
-import { ReactECharts } from '../../../components/SimpleChart';
+import { SimpleChart } from '../../../components/common/SimpleChart';
 import type { EChartsOption } from 'echarts';
 
 interface OrderStatusData {
@@ -130,7 +130,7 @@ const OrderStatusChart: React.FC<OrderStatusChartProps> = ({ data, loading = fal
       }}
       bodyStyle={{ padding: '16px' }}
     >
-      <ReactECharts
+      <SimpleChart
         option={option}
         height={400}
         loading={loading}
