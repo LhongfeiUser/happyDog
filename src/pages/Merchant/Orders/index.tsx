@@ -6,7 +6,6 @@ import { getOrdersListAsync, setStatusFilter } from '../../../store/slices/merch
 import type { Order, OrderStatus } from '../../../types';
 import OrderList from './OrderList';
 import OrderDetail from './OrderDetail';
-import { formatPrice } from '../../../utils';
 
 const { RangePicker } = DatePicker;
 

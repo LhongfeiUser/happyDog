@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { Order, OrderStatus } from '../../types';
-import { merchantOrders } from '../../services/api';
+import { merchantOrdersApi } from '../../services/api';
 
 interface MerchantOrdersState {
   list: Order[];
@@ -27,7 +27,7 @@ const initialState: MerchantOrdersState = {
 export const getOrdersListAsync = createAsyncThunk(
   'merchantOrders/getList',
   async (params: { page?: number; pageSize?: number; status?: OrderStatus; startDate?: string; endDate?: string }, { rejectWithValue }) => {
-    const response = await merchantOrders.getList(params);
+    const response = await merchantOrdersApi.getList(params);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -39,7 +39,7 @@ export const getOrdersListAsync = createAsyncThunk(
 export const acceptOrderAsync = createAsyncThunk(
   'merchantOrders/accept',
   async (id: string, { rejectWithValue }) => {
-    const response = await merchantOrders.accept(id);
+    const response = await merchantOrdersApi.accept(id);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -51,7 +51,7 @@ export const acceptOrderAsync = createAsyncThunk(
 export const rejectOrderAsync = createAsyncThunk(
   'merchantOrders/reject',
   async ({ id, reason }: { id: string; reason: string }, { rejectWithValue }) => {
-    const response = await merchantOrders.reject(id, reason);
+    const response = await merchantOrdersApi.reject(id, reason);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -63,7 +63,7 @@ export const rejectOrderAsync = createAsyncThunk(
 export const startServiceAsync = createAsyncThunk(
   'merchantOrders/startService',
   async (id: string, { rejectWithValue }) => {
-    const response = await merchantOrders.startService(id);
+    const response = await merchantOrdersApi.startService(id);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -75,7 +75,7 @@ export const startServiceAsync = createAsyncThunk(
 export const completeServiceAsync = createAsyncThunk(
   'merchantOrders/completeService',
   async (id: string, { rejectWithValue }) => {
-    const response = await merchantOrders.completeService(id);
+    const response = await merchantOrdersApi.completeService(id);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }

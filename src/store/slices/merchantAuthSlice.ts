@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { Merchant, MerchantRegisterRequest } from '../../types';
-import { merchantAuth } from '../../services/api';
+import { merchantAuthApi } from '../../services/api';
 
 interface MerchantAuthState {
   merchant: Merchant | null;
@@ -21,7 +21,7 @@ const initialState: MerchantAuthState = {
 export const merchantLoginAsync = createAsyncThunk(
   'merchantAuth/login',
   async (data: { phone: string; password: string }, { rejectWithValue }) => {
-    const response = await merchantAuth.login(data);
+    const response = await merchantAuthApi.login(data);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -34,7 +34,7 @@ export const merchantLoginAsync = createAsyncThunk(
 export const merchantRegisterAsync = createAsyncThunk(
   'merchantAuth/register',
   async (data: MerchantRegisterRequest, { rejectWithValue }) => {
-    const response = await merchantAuth.register(data);
+    const response = await merchantAuthApi.register(data);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -46,7 +46,7 @@ export const merchantRegisterAsync = createAsyncThunk(
 export const getMerchantInfoAsync = createAsyncThunk(
   'merchantAuth/getMerchantInfo',
   async (_, { rejectWithValue }) => {
-    const response = await merchantAuth.getMerchantInfo();
+    const response = await merchantAuthApi.getMerchantInfo();
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }

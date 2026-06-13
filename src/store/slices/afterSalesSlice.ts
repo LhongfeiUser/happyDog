@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { AfterSales, CreateAfterSalesRequest } from '../../types';
-import { afterSales } from '../../services/api';
+import { afterSalesApi } from '../../services/api';
 
 interface AfterSalesState {
   list: AfterSales[];
@@ -20,7 +20,7 @@ const initialState: AfterSalesState = {
 export const createAfterSalesAsync = createAsyncThunk(
   'afterSales/create',
   async (data: CreateAfterSalesRequest, { rejectWithValue }) => {
-    const response = await afterSales.create(data);
+    const response = await afterSalesApi.create(data);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -32,7 +32,7 @@ export const createAfterSalesAsync = createAsyncThunk(
 export const getUserAfterSalesAsync = createAsyncThunk(
   'afterSales/getUserList',
   async (params: { page?: number; pageSize?: number } | undefined, { rejectWithValue }) => {
-    const response = await afterSales.getUserList(params);
+    const response = await afterSalesApi.getUserList(params);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -44,7 +44,7 @@ export const getUserAfterSalesAsync = createAsyncThunk(
 export const getAfterSalesByIdAsync = createAsyncThunk(
   'afterSales/getById',
   async (id: string, { rejectWithValue }) => {
-    const response = await afterSales.getById(id);
+    const response = await afterSalesApi.getById(id);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -56,7 +56,7 @@ export const getAfterSalesByIdAsync = createAsyncThunk(
 export const cancelAfterSalesAsync = createAsyncThunk(
   'afterSales/cancel',
   async (id: string, { rejectWithValue }) => {
-    const response = await afterSales.cancel(id);
+    const response = await afterSalesApi.cancel(id);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }

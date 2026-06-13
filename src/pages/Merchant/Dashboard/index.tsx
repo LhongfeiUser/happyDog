@@ -13,7 +13,6 @@ import { getOrdersListAsync } from '../../../store/slices/merchantOrdersSlice';
 import StatCard from './StatCard';
 import RecentOrders from './RecentOrders';
 import RevenueChart from './RevenueChart';
-import { formatPrice } from '../../../utils';
 import type { Order } from '../../../types';
 
 const MerchantDashboard: React.FC = () => {
