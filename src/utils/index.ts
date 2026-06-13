@@ -77,6 +77,7 @@ export const formatServiceCategory = (category: string): string => {
     wash: '洗护',
     grooming: '美容',
     boarding: '寄养',
+    feeding: '喂养',
   };
 
   return categoryMap[category] || category;

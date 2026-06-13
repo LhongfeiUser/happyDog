@@ -7,6 +7,8 @@ import { store } from './store';
 import { theme } from './styles/theme';
 import { MainLayout } from './components/layout';
 import { Login, Register } from './pages/Auth';
+import { MerchantLogin, MerchantRegister } from './pages/Merchant/Auth';
+import MerchantServices from './pages/Merchant/Services';
 import Home from './pages/Home';
 import { ServiceList, ServiceDetail } from './pages/Services';
 import { OrderList, OrderDetail, OrderReview } from './pages/Orders';
@@ -36,9 +38,23 @@ const App: React.FC = () => {
       <ConfigProvider theme={theme} locale={zhCN}>
         <BrowserRouter>
           <Routes>
-            {/* 登录注册页面（无布局） */}
+            {/* 用户登录注册页面（无布局） */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+
+            {/* 商家登录注册页面（无布局） */}
+            <Route path="/merchant/login" element={<MerchantLogin />} />
+            <Route path="/merchant/register" element={<MerchantRegister />} />
+
+            {/* 商家服务管理页面（无布局） */}
+            <Route
+              path="/merchant/services"
+              element={
+                <ProtectedRoute>
+                  <MerchantServices />
+                </ProtectedRoute>
+              }
+            />
 
             {/* 主布局 */}
             <Route path="/" element={<MainLayout />}>
