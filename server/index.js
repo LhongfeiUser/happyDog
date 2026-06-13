@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const merchantAuth = require('./middleware/merchantAuth');
 
 const app = express();
 const PORT = 3000;
@@ -13,6 +14,25 @@ app.use(express.json());
 
 // 内存数据存储
 const data = {
+  merchants: [
+    {
+      id: 'merchant-001',
+      phone: '13600136000',
+      password: '123456',
+      shopName: '萌宠宠物服务中心',
+      ownerName: '张老板',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=merchant1',
+      address: '北京市朝阳区宠物街88号',
+      businessLicense: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400',
+      rating: 4.8,
+      totalOrders: 2847,
+      totalRevenue: 35678000,
+      status: 'active',
+      description: '专业宠物洗护、美容、寄养服务，10年行业经验',
+      createTime: '2025-12-01T00:00:00.000Z',
+      updateTime: '2026-01-01T00:00:00.000Z',
+    },
+  ],
   users: [
     {
       id: 'user-001',
@@ -1241,11 +1261,761 @@ app.get('/api/statistics', authMiddleware, (req, res) => {
   });
 });
 
+// ==================== 商家认证接口 ====================
+
+// 商家注册
+app.post('/api/merchant/auth/register', (req, res) => {
+  const { phone, password, shopName, ownerName, address, description } = req.body;
+
+  const existingMerchant = data.merchants.find((m) => m.phone === phone);
+  if (existingMerchant) {
+    return res.json({
+      code: 1002,
+      message: '该手机号已注册',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  const now = new Date().toISOString();
+  const newMerchant = {
+    id: `merchant_${uuidv4()}`,
+    phone,
+    password,
+    shopName,
+    ownerName,
+    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${shopName}`,
+    address: address || '',
+    businessLicense: '',
+    rating: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
+    status: 'active',
+    description: description || '',
+    createTime: now,
+    updateTime: now,
+  };
+
+  data.merchants.push(newMerchant);
+
+  const token = jwt.sign({ merchantId: newMerchant.id, type: 'merchant' }, JWT_SECRET, {
+    expiresIn: '7d',
+  });
+  const { password: _, ...merchantWithoutPassword } = newMerchant;
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: { token, merchant: merchantWithoutPassword },
+    timestamp: Date.now(),
+  });
+});
+
+// 商家登录
+app.post('/api/merchant/auth/login', (req, res) => {
+  const { phone, password } = req.body;
+
+  const merchant = data.merchants.find(
+    (m) => m.phone === phone && m.password === password
+  );
+
+  if (!merchant) {
+    return res.json({
+      code: 1001,
+      message: '手机号或密码错误',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  const token = jwt.sign({ merchantId: merchant.id, type: 'merchant' }, JWT_SECRET, {
+    expiresIn: '7d',
+  });
+  const { password: _, ...merchantWithoutPassword } = merchant;
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: { token, merchant: merchantWithoutPassword },
+    timestamp: Date.now(),
+  });
+});
+
+// 获取商家信息
+app.get('/api/merchant/info', merchantAuth, (req, res) => {
+  const merchant = data.merchants.find((m) => m.id === req.merchant.merchantId);
+
+  if (!merchant) {
+    return res.json({
+      code: 1003,
+      message: '商家不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  const { password: _, ...merchantWithoutPassword } = merchant;
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: merchantWithoutPassword,
+    timestamp: Date.now(),
+  });
+});
+
+// ==================== 商家服务管理接口 ====================
+
+// 获取商家服务列表
+app.get('/api/merchant/services', merchantAuth, (req, res) => {
+  const { page = 1, pageSize = 10 } = req.query;
+
+  const merchantServices = data.services.filter(
+    (s) => s.merchantId === req.merchant.merchantId
+  );
+
+  const start = (page - 1) * pageSize;
+  const end = start + parseInt(pageSize);
+  const list = merchantServices.slice(start, end);
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: {
+      list,
+      total: merchantServices.length,
+      page: parseInt(page),
+      pageSize: parseInt(pageSize),
+    },
+    timestamp: Date.now(),
+  });
+});
+
+// 创建服务
+app.post('/api/merchant/services', merchantAuth, (req, res) => {
+  const { name, category, description, price, duration, images } = req.body;
+
+  const now = new Date().toISOString();
+  const newService = {
+    id: `service_${uuidv4()}`,
+    merchantId: req.merchant.merchantId,
+    name,
+    category,
+    description,
+    price,
+    duration,
+    images: JSON.stringify(images || []),
+    rating: 0,
+    salesCount: 0,
+    status: 'active',
+    createTime: now,
+    updateTime: now,
+  };
+
+  data.services.push(newService);
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: newService,
+    timestamp: Date.now(),
+  });
+});
+
+// 更新服务
+app.put('/api/merchant/services/:id', merchantAuth, (req, res) => {
+  const serviceIndex = data.services.findIndex(
+    (s) => s.id === req.params.id && s.merchantId === req.merchant.merchantId
+  );
+
+  if (serviceIndex === -1) {
+    return res.json({
+      code: 3001,
+      message: '服务不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  data.services[serviceIndex] = {
+    ...data.services[serviceIndex],
+    ...req.body,
+    updateTime: new Date().toISOString(),
+  };
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: data.services[serviceIndex],
+    timestamp: Date.now(),
+  });
+});
+
+// 删除服务
+app.delete('/api/merchant/services/:id', merchantAuth, (req, res) => {
+  const serviceIndex = data.services.findIndex(
+    (s) => s.id === req.params.id && s.merchantId === req.merchant.merchantId
+  );
+
+  if (serviceIndex === -1) {
+    return res.json({
+      code: 3001,
+      message: '服务不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  data.services.splice(serviceIndex, 1);
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: null,
+    timestamp: Date.now(),
+  });
+});
+
+// 更新服务状态
+app.patch('/api/merchant/services/:id/status', merchantAuth, (req, res) => {
+  const service = data.services.find(
+    (s) => s.id === req.params.id && s.merchantId === req.merchant.merchantId
+  );
+
+  if (!service) {
+    return res.json({
+      code: 3001,
+      message: '服务不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  service.status = req.body.status;
+  service.updateTime = new Date().toISOString();
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: service,
+    timestamp: Date.now(),
+  });
+});
+
+// ==================== 商家订单管理接口 ====================
+
+// 获取商家订单列表
+app.get('/api/merchant/orders', merchantAuth, (req, res) => {
+  const { status, page = 1, pageSize = 10 } = req.query;
+
+  // 获取商家的服务ID列表
+  const merchantServiceIds = data.services
+    .filter((s) => s.merchantId === req.merchant.merchantId)
+    .map((s) => s.id);
+
+  let filteredOrders = data.orders.filter((o) =>
+    merchantServiceIds.includes(o.serviceId)
+  );
+
+  if (status) {
+    filteredOrders = filteredOrders.filter((o) => o.status === status);
+  }
+
+  // 按创建时间倒序
+  filteredOrders.sort(
+    (a, b) => new Date(b.createTime).getTime() - new Date(a.createTime).getTime()
+  );
+
+  const start = (page - 1) * pageSize;
+  const end = start + parseInt(pageSize);
+  const list = filteredOrders.slice(start, end);
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: {
+      list,
+      total: filteredOrders.length,
+      page: parseInt(page),
+      pageSize: parseInt(pageSize),
+    },
+    timestamp: Date.now(),
+  });
+});
+
+// 接单
+app.post('/api/merchant/orders/:id/accept', merchantAuth, (req, res) => {
+  const orderIndex = data.orders.findIndex((o) => o.id === req.params.id);
+
+  if (orderIndex === -1) {
+    return res.json({
+      code: 4001,
+      message: '订单不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  const order = data.orders[orderIndex];
+
+  // 验证订单是否属于该商家
+  const service = data.services.find((s) => s.id === order.serviceId);
+  if (!service || service.merchantId !== req.merchant.merchantId) {
+    return res.json({
+      code: 4003,
+      message: '无权操作该订单',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  if (order.status !== 'paid') {
+    return res.json({
+      code: 4002,
+      message: '订单状态不允许接单',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  order.status = 'in_progress';
+  order.updateTime = new Date().toISOString();
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: order,
+    timestamp: Date.now(),
+  });
+});
+
+// 拒单
+app.post('/api/merchant/orders/:id/reject', merchantAuth, (req, res) => {
+  const orderIndex = data.orders.findIndex((o) => o.id === req.params.id);
+
+  if (orderIndex === -1) {
+    return res.json({
+      code: 4001,
+      message: '订单不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  const order = data.orders[orderIndex];
+
+  // 验证订单是否属于该商家
+  const service = data.services.find((s) => s.id === order.serviceId);
+  if (!service || service.merchantId !== req.merchant.merchantId) {
+    return res.json({
+      code: 4003,
+      message: '无权操作该订单',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  if (order.status !== 'paid') {
+    return res.json({
+      code: 4002,
+      message: '订单状态不允许拒单',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  order.status = 'rejected';
+  order.updateTime = new Date().toISOString();
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: order,
+    timestamp: Date.now(),
+  });
+});
+
+// 开始服务
+app.post('/api/merchant/orders/:id/start', merchantAuth, (req, res) => {
+  const orderIndex = data.orders.findIndex((o) => o.id === req.params.id);
+
+  if (orderIndex === -1) {
+    return res.json({
+      code: 4001,
+      message: '订单不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  const order = data.orders[orderIndex];
+
+  // 验证订单是否属于该商家
+  const service = data.services.find((s) => s.id === order.serviceId);
+  if (!service || service.merchantId !== req.merchant.merchantId) {
+    return res.json({
+      code: 4003,
+      message: '无权操作该订单',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  if (order.status !== 'in_progress') {
+    return res.json({
+      code: 4002,
+      message: '订单状态不允许开始服务',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  // 可以添加实际开始时间字段
+  order.updateTime = new Date().toISOString();
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: order,
+    timestamp: Date.now(),
+  });
+});
+
+// 完成服务
+app.post('/api/merchant/orders/:id/complete', merchantAuth, (req, res) => {
+  const orderIndex = data.orders.findIndex((o) => o.id === req.params.id);
+
+  if (orderIndex === -1) {
+    return res.json({
+      code: 4001,
+      message: '订单不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  const order = data.orders[orderIndex];
+
+  // 验证订单是否属于该商家
+  const service = data.services.find((s) => s.id === order.serviceId);
+  if (!service || service.merchantId !== req.merchant.merchantId) {
+    return res.json({
+      code: 4003,
+      message: '无权操作该订单',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  if (order.status !== 'in_progress') {
+    return res.json({
+      code: 4002,
+      message: '订单状态不允许完成服务',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  order.status = 'completed';
+  order.completeTime = new Date().toISOString();
+  order.updateTime = new Date().toISOString();
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: order,
+    timestamp: Date.now(),
+  });
+});
+
+// ==================== 商家数据统计接口 ====================
+
+// 获取商家统计数据
+app.get('/api/merchant/statistics', merchantAuth, (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  // 获取商家的服务ID列表
+  const merchantServiceIds = data.services
+    .filter((s) => s.merchantId === req.merchant.merchantId)
+    .map((s) => s.id);
+
+  // 获取商家订单
+  let merchantOrders = data.orders.filter((o) =>
+    merchantServiceIds.includes(o.serviceId)
+  );
+
+  // 时间过滤
+  if (startDate && endDate) {
+    merchantOrders = merchantOrders.filter((o) => {
+      const orderDate = o.createTime.split('T')[0];
+      return orderDate >= startDate && orderDate <= endDate;
+    });
+  }
+
+  // 今日订单
+  const today = new Date().toISOString().split('T')[0];
+  const todayOrders = merchantOrders.filter((o) => o.createTime.startsWith(today));
+
+  // 今日收入
+  const todayRevenue = todayOrders.reduce((sum, o) => sum + o.totalPrice, 0);
+
+  // 待处理订单（已支付但未开始）
+  const pendingOrders = merchantOrders.filter((o) => o.status === 'paid').length;
+
+  // 平均评分
+  const merchantReviews = data.reviews.filter((r) =>
+    merchantServiceIds.includes(r.serviceId)
+  );
+  const totalRating = merchantReviews.reduce((sum, r) => sum + r.rating, 0);
+  const averageRating =
+    merchantReviews.length > 0
+      ? parseFloat((totalRating / merchantReviews.length).toFixed(1))
+      : 0;
+
+  // 服务分类统计
+  const serviceCategories = [
+    { category: 'wash', name: '洗护', icon: '🛁', orderCount: 0, percentage: 0 },
+    { category: 'grooming', name: '美容', icon: '✂️', orderCount: 0, percentage: 0 },
+    { category: 'boarding', name: '寄养', icon: '🏠', orderCount: 0, percentage: 0 },
+    { category: 'feeding', name: '上门喂养', icon: '🍽️', orderCount: 0, percentage: 0 },
+  ];
+
+  merchantOrders.forEach((o) => {
+    const cat = serviceCategories.find((c) => c.category === o.serviceCategory);
+    if (cat) cat.orderCount++;
+  });
+
+  const totalOrders = merchantOrders.length;
+  serviceCategories.forEach((c) => {
+    c.percentage =
+      totalOrders > 0 ? Math.round((c.orderCount / totalOrders) * 100) : 0;
+  });
+
+  // 热门服务排行
+  const salesMap = {};
+  merchantOrders.forEach((o) => {
+    if (!salesMap[o.serviceId]) {
+      const service = data.services.find((s) => s.id === o.serviceId);
+      salesMap[o.serviceId] = {
+        id: o.serviceId,
+        name: o.serviceName,
+        price: service?.price ?? o.totalPrice,
+        salesCount: 0,
+      };
+    }
+    salesMap[o.serviceId].salesCount++;
+  });
+  const topServices = Object.values(salesMap)
+    .sort((a, b) => b.salesCount - a.salesCount)
+    .slice(0, 6);
+
+  // 月度订单趋势（最近6个月）
+  const monthlyTrend = [];
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const count = merchantOrders.filter((o) => o.createTime.startsWith(monthKey)).length;
+    monthlyTrend.push({ month: monthNames[d.getMonth()], orders: count });
+  }
+
+  // 客户分析
+  const customerIds = new Set(merchantOrders.map((o) => o.userId));
+  const totalCustomers = customerIds.size;
+  const customerOrderCounts = {};
+  merchantOrders.forEach((o) => {
+    customerOrderCounts[o.userId] = (customerOrderCounts[o.userId] || 0) + 1;
+  });
+  const repeatCustomers = Object.values(customerOrderCounts).filter((c) => c > 1).length;
+
+  // 收入趋势（最近6个月）
+  const monthlyRevenue = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const revenue = merchantOrders
+      .filter((o) => o.createTime.startsWith(monthKey))
+      .reduce((sum, o) => sum + o.totalPrice, 0);
+    monthlyRevenue.push({ month: monthNames[d.getMonth()], revenue });
+  }
+
+  // 订单状态分布
+  const orderStatusDistribution = [
+    { status: 'pending_payment', name: '待支付', count: 0, color: '#FFC107' },
+    { status: 'paid', name: '已支付', count: 0, color: '#2196F3' },
+    { status: 'in_progress', name: '进行中', count: 0, color: '#FF6B35' },
+    { status: 'completed', name: '已完成', count: 0, color: '#4CAF50' },
+    { status: 'cancelled', name: '已取消', count: 0, color: '#9E9E9E' },
+  ];
+
+  merchantOrders.forEach((o) => {
+    const status = orderStatusDistribution.find((s) => s.status === o.status);
+    if (status) status.count++;
+  });
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: {
+      todayOrders: todayOrders.length,
+      todayRevenue,
+      pendingOrders,
+      averageRating,
+      totalServices: merchantServiceIds.length,
+      totalOrders,
+      serviceCategories,
+      topServices,
+      monthlyTrend,
+      customerAnalysis: {
+        totalCustomers,
+        repeatCustomers,
+        newCustomers: totalCustomers - repeatCustomers,
+      },
+      monthlyRevenue,
+      orderStatusDistribution,
+    },
+    timestamp: Date.now(),
+  });
+});
+
+// 获取仪表盘概览
+app.get('/api/merchant/dashboard', merchantAuth, (req, res) => {
+  // 获取商家的服务ID列表
+  const merchantServiceIds = data.services
+    .filter((s) => s.merchantId === req.merchant.merchantId)
+    .map((s) => s.id);
+
+  // 获取商家订单
+  const merchantOrders = data.orders.filter((o) =>
+    merchantServiceIds.includes(o.serviceId)
+  );
+
+  // 今日订单
+  const today = new Date().toISOString().split('T')[0];
+  const todayOrders = merchantOrders.filter((o) => o.createTime.startsWith(today));
+
+  // 今日收入
+  const todayRevenue = todayOrders.reduce((sum, o) => sum + o.totalPrice, 0);
+
+  // 待处理订单
+  const pendingOrders = merchantOrders.filter((o) => o.status === 'paid').length;
+
+  // 平均评分
+  const merchantReviews = data.reviews.filter((r) =>
+    merchantServiceIds.includes(r.serviceId)
+  );
+  const totalRating = merchantReviews.reduce((sum, r) => sum + r.rating, 0);
+  const averageRating =
+    merchantReviews.length > 0
+      ? parseFloat((totalRating / merchantReviews.length).toFixed(1))
+      : 0;
+
+  // 客户分析
+  const customerIds = new Set(merchantOrders.map((o) => o.userId));
+  const totalCustomers = customerIds.size;
+  const customerOrderCounts = {};
+  merchantOrders.forEach((o) => {
+    customerOrderCounts[o.userId] = (customerOrderCounts[o.userId] || 0) + 1;
+  });
+  const repeatCustomers = Object.values(customerOrderCounts).filter((c) => c > 1).length;
+
+  // 收入趋势（最近6个月）
+  const monthlyRevenue = [];
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const revenue = merchantOrders
+      .filter((o) => o.createTime.startsWith(monthKey))
+      .reduce((sum, o) => sum + o.totalPrice, 0);
+    monthlyRevenue.push({ month: monthNames[d.getMonth()], revenue });
+  }
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: {
+      todayOrders: todayOrders.length,
+      todayRevenue,
+      pendingOrders,
+      averageRating,
+      totalServices: merchantServiceIds.length,
+      customerAnalysis: {
+        totalCustomers,
+        repeatCustomers,
+        newCustomers: totalCustomers - repeatCustomers,
+      },
+      monthlyRevenue,
+    },
+    timestamp: Date.now(),
+  });
+});
+
+// ==================== 文件上传接口 ====================
+
+// 上传图片
+app.post('/api/merchant/upload/image', merchantAuth, (req, res) => {
+  const { image } = req.body; // base64格式的图片
+
+  if (!image) {
+    return res.json({
+      code: 7001,
+      message: '图片不能为空',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  // 模拟上传，实际应该保存到云存储
+  const imageUrl = `https://images.unsplash.com/photo-${Date.now()}?w=400`;
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: { url: imageUrl },
+    timestamp: Date.now(),
+  });
+});
+
+// 上传营业执照
+app.post('/api/merchant/upload/license', merchantAuth, (req, res) => {
+  const { license } = req.body; // base64格式的营业执照
+
+  if (!license) {
+    return res.json({
+      code: 7001,
+      message: '营业执照不能为空',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  // 模拟上传，实际应该保存到云存储
+  const licenseUrl = `https://images.unsplash.com/photo-${Date.now()}?w=400`;
+
+  // 更新商家营业执照
+  const merchant = data.merchants.find((m) => m.id === req.merchant.merchantId);
+  if (merchant) {
+    merchant.businessLicense = licenseUrl;
+    merchant.updateTime = new Date().toISOString();
+  }
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: { url: licenseUrl },
+    timestamp: Date.now(),
+  });
+});
+
 // 启动服务器
 app.listen(PORT, () => {
   console.log(`🐾 宠物服务平台后端服务已启动`);
   console.log(`📡 地址: http://localhost:${PORT}`);
   console.log(`📋 API文档:`);
+  console.log(`   用户接口:`);
   console.log(`   - POST /api/auth/login - 用户登录`);
   console.log(`   - POST /api/auth/register - 用户注册`);
   console.log(`   - GET  /api/user/profile - 获取用户信息`);
@@ -1258,4 +2028,22 @@ app.listen(PORT, () => {
   console.log(`   - POST /api/reviews - 提交评价`);
   console.log(`   - POST /api/after-sales - 提交售后申请`);
   console.log(`   - GET  /api/statistics - 获取数据统计`);
+  console.log(`   商家接口:`);
+  console.log(`   - POST /api/merchant/auth/register - 商家注册`);
+  console.log(`   - POST /api/merchant/auth/login - 商家登录`);
+  console.log(`   - GET  /api/merchant/info - 获取商家信息`);
+  console.log(`   - GET  /api/merchant/services - 获取商家服务列表`);
+  console.log(`   - POST /api/merchant/services - 创建服务`);
+  console.log(`   - PUT  /api/merchant/services/:id - 更新服务`);
+  console.log(`   - DELETE /api/merchant/services/:id - 删除服务`);
+  console.log(`   - PATCH /api/merchant/services/:id/status - 更新服务状态`);
+  console.log(`   - GET  /api/merchant/orders - 获取商家订单列表`);
+  console.log(`   - POST /api/merchant/orders/:id/accept - 接单`);
+  console.log(`   - POST /api/merchant/orders/:id/reject - 拒单`);
+  console.log(`   - POST /api/merchant/orders/:id/start - 开始服务`);
+  console.log(`   - POST /api/merchant/orders/:id/complete - 完成服务`);
+  console.log(`   - GET  /api/merchant/statistics - 获取商家统计数据`);
+  console.log(`   - GET  /api/merchant/dashboard - 获取仪表盘概览`);
+  console.log(`   - POST /api/merchant/upload/image - 上传图片`);
+  console.log(`   - POST /api/merchant/upload/license - 上传营业执照`);
 });

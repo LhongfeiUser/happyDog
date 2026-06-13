@@ -6,8 +6,10 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import { theme } from './styles/theme';
 import { MainLayout } from './components/layout';
+import MerchantLayout from './components/layout/MerchantLayout';
 import { Login, Register } from './pages/Auth';
 import { MerchantLogin, MerchantRegister } from './pages/Merchant/Auth';
+import MerchantDashboard from './pages/Merchant/Dashboard';
 import MerchantServices from './pages/Merchant/Services';
 import MerchantOrders from './pages/Merchant/Orders';
 import MerchantStatistics from './pages/Merchant/Statistics';
@@ -48,35 +50,14 @@ const App: React.FC = () => {
             <Route path="/merchant/login" element={<MerchantLogin />} />
             <Route path="/merchant/register" element={<MerchantRegister />} />
 
-            {/* 商家服务管理页面（无布局） */}
-            <Route
-              path="/merchant/services"
-              element={
-                <ProtectedRoute>
-                  <MerchantServices />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* 商家订单管理页面（无布局） */}
-            <Route
-              path="/merchant/orders"
-              element={
-                <ProtectedRoute>
-                  <MerchantOrders />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* 商家数据统计页面（无布局） */}
-            <Route
-              path="/merchant/statistics"
-              element={
-                <ProtectedRoute>
-                  <MerchantStatistics />
-                </ProtectedRoute>
-              }
-            />
+            {/* 商家布局 */}
+            <Route path="/merchant" element={<MerchantLayout />}>
+              <Route index element={<Navigate to="/merchant/dashboard" replace />} />
+              <Route path="dashboard" element={<MerchantDashboard />} />
+              <Route path="services" element={<MerchantServices />} />
+              <Route path="orders" element={<MerchantOrders />} />
+              <Route path="statistics" element={<MerchantStatistics />} />
+            </Route>
 
             {/* 主布局 */}
             <Route path="/" element={<MainLayout />}>
