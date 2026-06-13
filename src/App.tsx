@@ -9,6 +9,8 @@ import { MainLayout } from './components/layout';
 import { Login, Register } from './pages/Auth';
 import { MerchantLogin, MerchantRegister } from './pages/Merchant/Auth';
 import MerchantServices from './pages/Merchant/Services';
+import MerchantOrders from './pages/Merchant/Orders';
+import MerchantStatistics from './pages/Merchant/Statistics';
 import Home from './pages/Home';
 import { ServiceList, ServiceDetail } from './pages/Services';
 import { OrderList, OrderDetail, OrderReview } from './pages/Orders';
@@ -52,6 +54,26 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <MerchantServices />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 商家订单管理页面（无布局） */}
+            <Route
+              path="/merchant/orders"
+              element={
+                <ProtectedRoute>
+                  <MerchantOrders />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 商家数据统计页面（无布局） */}
+            <Route
+              path="/merchant/statistics"
+              element={
+                <ProtectedRoute>
+                  <MerchantStatistics />
                 </ProtectedRoute>
               }
             />
