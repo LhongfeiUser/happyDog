@@ -218,3 +218,5 @@ export interface StatisticsData {
     percentage: number;
   }[];
 }
+
+export * from './merchant';
