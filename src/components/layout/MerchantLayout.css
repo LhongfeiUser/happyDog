@@ -1,0 +1,170 @@
+/* 商家后台布局样式 */
+.merchant-layout {
+  min-height: 100vh;
+}
+
+.merchant-sider {
+  background-color: #fff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.merchant-info {
+  padding: 20px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.merchant-info-trigger {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.merchant-info-trigger:hover {
+  opacity: 0.8;
+}
+
+.merchant-details {
+  margin-left: 12px;
+}
+
+.merchant-name {
+  font-size: 14px;
+  color: #262626;
+}
+
+.merchant-role {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.merchant-menu {
+  border-right: none !important;
+}
+
+.merchant-menu .ant-menu-item {
+  margin: 4px 8px;
+  border-radius: 6px;
+  width: calc(100% - 16px);
+}
+
+.merchant-menu .ant-menu-item-selected {
+  background-color: #fff7e6 !important;
+  color: #fa8c16 !important;
+  border-right: none;
+}
+
+.merchant-menu .ant-menu-item:hover {
+  background-color: #fff7e6 !important;
+  color: #fa8c16 !important;
+}
+
+.logout-button {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+}
+
+.logout-button .ant-menu-item {
+  margin: 4px 8px;
+  border-radius: 6px;
+  width: calc(100% - 16px);
+  color: #ff4d4f;
+}
+
+.logout-button .ant-menu-item:hover {
+  background-color: #fff1f0 !important;
+  color: #ff4d4f !important;
+}
+
+.merchant-header {
+  background: #fff;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.collapse-button {
+  font-size: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+}
+
+.collapse-button:hover {
+  background-color: #f5f5f5 !important;
+  color: #fa8c16 !important;
+}
+
+.notification-button {
+  font-size: 16px;
+  border-radius: 6px;
+}
+
+.notification-button:hover {
+  background-color: #f5f5f5 !important;
+  color: #fa8c16 !important;
+}
+
+.merchant-dropdown-trigger {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.merchant-dropdown-trigger:hover {
+  background-color: #f5f5f5;
+}
+
+.merchant-content {
+  margin: 24px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  min-height: calc(100vh - 112px);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .merchant-sider {
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+  }
+
+  .merchant-content {
+    margin: 16px;
+    padding: 16px;
+  }
+
+  .merchant-header {
+    padding: 0 16px;
+  }
+}
+
+/* 主题色覆盖 */
+.ant-layout-sider-trigger {
+  background-color: #fa8c16;
+}
+
+.ant-menu-item-selected::after {
+  border-right-color: #fa8c16 !important;
+}
+
+.ant-menu-item-active::before {
+  background-color: #fa8c16 !important;
+}
