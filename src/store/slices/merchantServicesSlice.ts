@@ -59,9 +59,9 @@ export const updateServiceAsync = createAsyncThunk(
 
 // 删除服务
 export const deleteServiceAsync = createAsyncThunk(
-  'merchantServices/delete',
+  'merchantServices.deleteService',
   async (id: string, { rejectWithValue }) => {
-    const response = await merchantServices.deleteService(id);
+    const response = await merchantServices.deleteServiceService(id);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }

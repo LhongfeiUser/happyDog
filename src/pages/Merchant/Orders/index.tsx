@@ -40,14 +40,6 @@ const Orders: React.FC = () => {
     fetchOrders();
   }, [fetchOrders]);
 
-  // 使用useMemo缓存统计计算
-  const statistics = useMemo(() => ({
-    pendingAccept: list.filter(o => o.status === 'pending_accept').length,
-    accepted: list.filter(o => o.status === 'accepted').length,
-    inProgress: list.filter(o => o.status === 'in_progress').length,
-    completed: list.filter(o => o.status === 'completed').length,
-  }), [list]);
-
   // 查看详情
   const handleViewDetail = (order: Order) => {
     setSelectedOrder(order);

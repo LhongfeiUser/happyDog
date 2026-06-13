@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Row, Col, Result, Button } from 'antd';
 import {
   ShoppingCartOutlined,
-  WalletOutlined,
   ClockCircleOutlined,
   StarOutlined,
   ReloadOutlined,

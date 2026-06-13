@@ -1,6 +1,6 @@
 import React from 'react';
-import { Modal, Descriptions, Divider, Image, Tag, Row, Col, Card } from 'antd';
-import { UserOutlined, PhoneOutlined, HomeOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons';
+import { Modal, Descriptions, Image, Tag, Row, Col, Card } from 'antd';
+import { UserOutlined, PhoneOutlined, HomeOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { Order } from '../../../types';
 import OrderStatusTag from '../components/OrderStatusTag';
 import { formatPrice, formatDate } from '../../../utils';
