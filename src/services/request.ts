@@ -13,8 +13,8 @@ const request = axios.create({
 // 请求拦截器
 request.interceptors.request.use(
   (config) => {
-    // 从localStorage获取token
-    const token = localStorage.getItem('token');
+    // 从localStorage获取token（支持C端和商家端）
+    const token = localStorage.getItem('token') || localStorage.getItem('merchantToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -34,8 +34,12 @@ request.interceptors.response.use(
     if (data.code !== 0) {
       // token无效或过期
       if (data.code === 1003) {
+        // 清除所有token
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        localStorage.removeItem('merchantToken');
+        // 根据当前token类型决定重定向位置
+        const merchantToken = localStorage.getItem('merchantToken');
+        window.location.href = merchantToken ? '/merchant/login' : '/login';
         message.error('登录已过期，请重新登录');
         return Promise.reject(new Error(data.message));
       }
@@ -57,8 +61,12 @@ request.interceptors.response.use(
     const { status } = error.response;
     switch (status) {
       case 401:
+        // 清除所有token
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        localStorage.removeItem('merchantToken');
+        // 根据当前token类型决定重定向位置
+        const merchantToken = localStorage.getItem('merchantToken');
+        window.location.href = merchantToken ? '/merchant/login' : '/login';
         message.error('登录已过期，请重新登录');
         break;
       case 403:
