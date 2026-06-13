@@ -23,7 +23,6 @@ import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { getServicesListAsync } from '../../../store/slices/merchantServicesSlice';
 import ServiceList from './ServiceList';
 import ServiceModal from './ServiceModal';
-import { formatPrice, formatServiceCategory } from '../../../utils';
 import type { MerchantService } from '../../../types';
 
 const MerchantServices: React.FC = () => {
