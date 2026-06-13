@@ -62,7 +62,7 @@ export const statistics = {
 };
 
 // 商家认证API
-export const merchantAuthApi = {
+export const merchantAuth = {
   login: merchantAuthApi.login,
   register: merchantAuthApi.register,
   getMerchantInfo: merchantAuthApi.getMerchantInfo,
@@ -79,7 +79,7 @@ export const merchantServices = {
 };
 
 // 商家订单API
-export const merchantOrdersApi = {
+export const merchantOrders = {
   getList: merchantOrdersApi.getList,
   accept: merchantOrdersApi.accept,
   reject: merchantOrdersApi.reject,
@@ -90,5 +90,4 @@ export const merchantOrdersApi = {
 // 商家数据统计API
 export const merchantStatistics = {
   getData: merchantStatisticsApi.getData,
-  
 };
