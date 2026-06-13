@@ -30,7 +30,6 @@ import { isValidPhone } from '../../../utils';
 import type { MerchantRegisterRequest } from '../../../types';
 
 const { Title, Text, Paragraph } = Typography;
-const { Step } = Steps;
 const { TextArea } = Input;
 
 const MerchantRegister: React.FC = () => {
@@ -129,11 +128,15 @@ const MerchantRegister: React.FC = () => {
           <Text type="secondary">填写信息，快速开通商家账号</Text>
         </div>
 
-        <Steps current={current} style={{ marginBottom: 32 }}>
-          <Step title="基本信息" />
-          <Step title="资质信息" />
-          <Step title="确认信息" />
-        </Steps>
+        <Steps
+          current={current}
+          style={{ marginBottom: 32 }}
+          items={[
+            { title: '基本信息' },
+            { title: '资质信息' },
+            { title: '确认信息' },
+          ]}
+        />
 
         <Form
           form={form}

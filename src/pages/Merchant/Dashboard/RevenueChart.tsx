@@ -83,7 +83,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data, loading = false }) =>
           if (value >= 10000) {
             return `${(value / 10000).toFixed(1)}w`;
           }
-          return value;
+          return `${value}`;
         },
       },
       splitLine: {
