@@ -218,7 +218,7 @@ const Statistics: React.FC = () => {
             value={data?.totalRevenue || 0}
             prefix={<DollarOutlined style={{ color: '#faad14' }} />}
             suffix="元"
-            precision={2}
+            
             trend="up"
             trendValue="+15.2%"
             loading={loading}
@@ -229,7 +229,7 @@ const Statistics: React.FC = () => {
             title="平均评分"
             value={data?.averageRating || 0}
             prefix={<StarOutlined style={{ color: '#f5222d' }} />}
-            precision={1}
+            
             loading={loading}
           />
         </Col>
