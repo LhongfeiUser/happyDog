@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, message, Tag, Image, Button } from 'antd';
+import { Modal, message, Tag, Image, Button, Form } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { createServiceAsync, updateServiceAsync } from '../../../store/slices/merchantServicesSlice';
 import ServiceForm from './ServiceForm';
@@ -14,7 +14,7 @@ interface ServiceModalProps {
 }
 
 const ServiceModal: React.FC<ServiceModalProps> = ({ visible, onClose, service, readOnly = false }) => {
-  const [form] = ServiceForm.useForm();
+  const [form] = Form.useForm();
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector(state => state.merchantServices);
 

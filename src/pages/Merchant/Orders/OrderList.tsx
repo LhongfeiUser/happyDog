@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Table, Button, Space, Card, Input, DatePicker, message, Modal } from 'antd';
-import { SearchOutlined, EyeOutlined, CheckOutlined, CloseOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
+import React, { useState, type JSX } from 'react';
+import { Table, Button, Space, Card, Input, message, Modal } from 'antd';
+import { EyeOutlined, CheckOutlined, CloseOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
 import { useAppDispatch } from '../../../hooks';
 import type { Order, OrderStatus } from '../../../types';
 import OrderStatusTag from '../components/OrderStatusTag';
@@ -14,7 +13,7 @@ import {
   completeServiceAsync,
 } from '../../../store/slices/merchantOrdersSlice';
 
-const { RangePicker } = DatePicker;
+
 
 interface OrderListProps {
   orders: Order[];

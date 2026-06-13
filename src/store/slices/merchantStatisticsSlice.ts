@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { MerchantStatistics } from '../../types';
-import { merchantStatisticsApi } from '../../services/api';
+import { merchantStatistics } from '../../services/api';
 
 interface DateRange {
   startDate: string;
@@ -29,7 +29,7 @@ const initialState: MerchantStatisticsState = {
 export const getStatisticsDataAsync = createAsyncThunk(
   'merchantStatistics/getData',
   async (params: { startDate?: string; endDate?: string }, { rejectWithValue }) => {
-    const response = await merchantStatisticsApi.getData(params);
+    const response = await merchantStatistics.getData(params);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }

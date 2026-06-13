@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { MerchantService } from '../../types';
-import { merchantServicesApi } from '../../services/api';
+import { merchantServices } from '../../services/api';
 
 interface MerchantServicesState {
   list: MerchantService[];
@@ -25,7 +25,7 @@ const initialState: MerchantServicesState = {
 export const getServicesListAsync = createAsyncThunk(
   'merchantServices/getList',
   async (params: { page?: number; pageSize?: number; category?: string; status?: string }, { rejectWithValue }) => {
-    const response = await merchantServicesApi.getList(params);
+    const response = await merchantServices.getList(params);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -37,7 +37,7 @@ export const getServicesListAsync = createAsyncThunk(
 export const createServiceAsync = createAsyncThunk(
   'merchantServices/create',
   async (data: Omit<MerchantService, 'id' | 'merchantId' | 'rating' | 'salesCount' | 'auditStatus' | 'auditReason' | 'createTime' | 'updateTime'>, { rejectWithValue }) => {
-    const response = await merchantServicesApi.create(data);
+    const response = await merchantServices.create(data);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -49,7 +49,7 @@ export const createServiceAsync = createAsyncThunk(
 export const updateServiceAsync = createAsyncThunk(
   'merchantServices/update',
   async ({ id, data }: { id: string; data: Partial<MerchantService> }, { rejectWithValue }) => {
-    const response = await merchantServicesApi.update(id, data);
+    const response = await merchantServices.update(id, data);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -61,7 +61,7 @@ export const updateServiceAsync = createAsyncThunk(
 export const deleteServiceAsync = createAsyncThunk(
   'merchantServices/delete',
   async (id: string, { rejectWithValue }) => {
-    const response = await merchantServicesApi.deleteService(id);
+    const response = await merchantServices.deleteService(id);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }
@@ -73,7 +73,7 @@ export const deleteServiceAsync = createAsyncThunk(
 export const updateServiceStatusAsync = createAsyncThunk(
   'merchantServices/updateStatus',
   async ({ id, status }: { id: string; status: 'active' | 'inactive' }, { rejectWithValue }) => {
-    const response = await merchantServicesApi.updateStatus(id, status);
+    const response = await merchantServices.updateStatus(id, status);
     if (response.code !== 0) {
       return rejectWithValue(response.message);
     }

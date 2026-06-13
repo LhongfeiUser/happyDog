@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Row, Col, Spin, Result, Button } from 'antd';
+import { Row, Col, Result, Button } from 'antd';
 import {
   ShoppingCartOutlined,
   WalletOutlined,

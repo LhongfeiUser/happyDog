@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Row, Col, Card, Select, DatePicker, Button, Statistic, Space, Alert } from 'antd';
-import { SearchOutlined, ReloadOutlined, ShoppingOutlined, CheckCircleOutlined, ClockCircleOutlined, ServiceOutlined } from '@ant-design/icons';
+import { SearchOutlined, ReloadOutlined, ShoppingOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../../../hooks';
 import { getOrdersListAsync, setStatusFilter } from '../../../store/slices/merchantOrdersSlice';
 import type { Order, OrderStatus } from '../../../types';
@@ -171,7 +171,7 @@ const Orders: React.FC = () => {
               title={<span style={{ color: 'rgba(255,255,255,0.85)' }}>服务中</span>}
               value={inProgressCount}
               suffix="单"
-              prefix={<ServiceOutlined style={{ color: '#fff' }} />}
+              prefix={<CheckCircleOutlined style={{ color: '#fff' }} />}
               valueStyle={{ color: '#fff', fontSize: 28, fontWeight: 600 }}
             />
           </Card>

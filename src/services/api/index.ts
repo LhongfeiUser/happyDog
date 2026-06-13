@@ -1,7 +1,7 @@
 // API服务抽象层
 // 当前使用真实API（Node.js后端）
 
-import { authApi, petsApi, servicesApi, ordersApi, reviewsApi, afterSalesApi } from '../real';
+import { authApi, petsApi, servicesApi, ordersApi, reviewsApi, afterSalesApi, merchantAuthApi, merchantServicesApi, merchantOrdersApi, merchantStatisticsApi } from '../real';
 import { getStatistics } from './statistics';
 
 // 认证API
@@ -59,4 +59,36 @@ export const afterSales = {
 // 数据统计API
 export const statistics = {
   getStatistics,
+};
+
+// 商家认证API
+export const merchantAuth = {
+  login: merchantAuthApi.login,
+  register: merchantAuthApi.register,
+  getMerchantInfo: merchantAuthApi.getMerchantInfo,
+  updateMerchantInfo: merchantAuthApi.updateMerchantInfo,
+};
+
+// 商家服务API
+export const merchantServices = {
+  getList: merchantServicesApi.getList,
+  create: merchantServicesApi.create,
+  update: merchantServicesApi.update,
+  delete: merchantServicesApi.delete,
+  updateStatus: merchantServicesApi.updateStatus,
+};
+
+// 商家订单API
+export const merchantOrders = {
+  getList: merchantOrdersApi.getList,
+  accept: merchantOrdersApi.accept,
+  reject: merchantOrdersApi.reject,
+  startService: merchantOrdersApi.startService,
+  completeService: merchantOrdersApi.completeService,
+};
+
+// 商家数据统计API
+export const merchantStatistics = {
+  getData: merchantStatisticsApi.getData,
+  getDashboardOverview: merchantStatisticsApi.getDashboardOverview,
 };
