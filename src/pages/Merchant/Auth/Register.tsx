@@ -94,7 +94,7 @@ const MerchantRegister: React.FC = () => {
   // Form validation rules
   const phoneValidationRules = [
     { required: true, message: '请输入联系电话' },
-    { validator: (_, value) => isValidPhone(value) ? Promise.resolve() : Promise.reject('请输入有效的手机号') },
+    { validator: (_: any, value: any) => isValidPhone(value) ? Promise.resolve() : Promise.reject('请输入有效的手机号') },
   ];
 
   const requiredValidationRules = [
