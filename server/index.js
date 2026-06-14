@@ -531,7 +531,12 @@ app.put('/api/pets/:id/default', authMiddleware, (req, res) => {
 app.get('/api/services', (req, res) => {
   const { category, page = 1, pageSize = 10 } = req.query;
 
-  let filteredServices = data.services.filter((s) => s.status === 'active');
+  let filteredServices = data.services
+    .filter((s) => s.status === 'active')
+    .map((s) => ({
+      ...s,
+      images: typeof s.images === 'string' ? JSON.parse(s.images) : s.images,
+    }));
 
   if (category) {
     filteredServices = filteredServices.filter((s) => s.category === category);
@@ -567,10 +572,16 @@ app.get('/api/services/:id', (req, res) => {
     });
   }
 
+  // 解析 images 为数组
+  const responseService = {
+    ...service,
+    images: typeof service.images === 'string' ? JSON.parse(service.images) : service.images,
+  };
+
   res.json({
     code: 0,
     message: 'success',
-    data: service,
+    data: responseService,
     timestamp: Date.now(),
   });
 });
@@ -581,6 +592,10 @@ app.get('/api/services/recommend/list', (req, res) => {
 
   const sortedServices = [...data.services]
     .filter((s) => s.status === 'active')
+    .map((s) => ({
+      ...s,
+      images: typeof s.images === 'string' ? JSON.parse(s.images) : s.images,
+    }))
     .sort((a, b) => b.salesCount - a.salesCount)
     .slice(0, parseInt(limit));
 
@@ -1364,15 +1379,61 @@ app.get('/api/merchant/info', merchantAuth, (req, res) => {
   });
 });
 
+// 更新商家信息
+app.put('/api/merchant/info', merchantAuth, (req, res) => {
+  const merchantIndex = data.merchants.findIndex((m) => m.id === req.merchant.merchantId);
+
+  if (merchantIndex === -1) {
+    return res.json({
+      code: 1003,
+      message: '商家不存在',
+      data: null,
+      timestamp: Date.now(),
+    });
+  }
+
+  // 允许更新的字段
+  const allowedFields = [
+    'name', 'logo', 'contactName', 'contactPhone',
+    'businessLicense', 'businessLicenseImage', 'address',
+    'businessHours', 'description'
+  ];
+
+  const updates = {};
+  allowedFields.forEach(field => {
+    if (req.body[field] !== undefined) {
+      updates[field] = req.body[field];
+    }
+  });
+
+  data.merchants[merchantIndex] = {
+    ...data.merchants[merchantIndex],
+    ...updates,
+    updateTime: new Date().toISOString(),
+  };
+
+  const { password: _, ...merchantWithoutPassword } = data.merchants[merchantIndex];
+
+  res.json({
+    code: 0,
+    message: 'success',
+    data: merchantWithoutPassword,
+    timestamp: Date.now(),
+  });
+});
+
 // ==================== 商家服务管理接口 ====================
 
 // 获取商家服务列表
 app.get('/api/merchant/services', merchantAuth, (req, res) => {
   const { page = 1, pageSize = 10 } = req.query;
 
-  const merchantServices = data.services.filter(
-    (s) => s.merchantId === req.merchant.merchantId
-  );
+  const merchantServices = data.services
+    .filter((s) => s.merchantId === req.merchant.merchantId)
+    .map((s) => ({
+      ...s,
+      images: typeof s.images === 'string' ? JSON.parse(s.images) : s.images,
+    }));
 
   const start = (page - 1) * pageSize;
   const end = start + parseInt(pageSize);
@@ -1414,10 +1475,16 @@ app.post('/api/merchant/services', merchantAuth, (req, res) => {
 
   data.services.push(newService);
 
+  // 返回时解析 images 为数组
+  const responseService = {
+    ...newService,
+    images: typeof newService.images === 'string' ? JSON.parse(newService.images) : newService.images,
+  };
+
   res.json({
     code: 0,
     message: 'success',
-    data: newService,
+    data: responseService,
     timestamp: Date.now(),
   });
 });
@@ -1443,10 +1510,18 @@ app.put('/api/merchant/services/:id', merchantAuth, (req, res) => {
     updateTime: new Date().toISOString(),
   };
 
+  // 返回时解析 images 为数组
+  const responseService = {
+    ...data.services[serviceIndex],
+    images: typeof data.services[serviceIndex].images === 'string'
+      ? JSON.parse(data.services[serviceIndex].images)
+      : data.services[serviceIndex].images,
+  };
+
   res.json({
     code: 0,
     message: 'success',
-    data: data.services[serviceIndex],
+    data: responseService,
     timestamp: Date.now(),
   });
 });
