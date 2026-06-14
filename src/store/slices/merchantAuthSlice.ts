@@ -54,6 +54,18 @@ export const getMerchantInfoAsync = createAsyncThunk(
   }
 );
 
+// 更新商家信息
+export const updateMerchantInfoAsync = createAsyncThunk(
+  'merchantAuth/updateMerchantInfo',
+  async (data: Partial<Merchant>, { rejectWithValue }) => {
+    const response = await merchantAuth.updateMerchantInfo(data);
+    if (response.code !== 0) {
+      return rejectWithValue(response.message);
+    }
+    return response.data;
+  }
+);
+
 // 退出登录
 export const merchantLogoutAsync = createAsyncThunk(
   'merchantAuth/logout',
@@ -110,6 +122,19 @@ const merchantAuthSlice = createSlice({
         state.loading = false;
         state.token = null;
         localStorage.removeItem('merchantToken');
+      })
+      // 更新商家信息
+      .addCase(updateMerchantInfoAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateMerchantInfoAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.merchant = action.payload;
+      })
+      .addCase(updateMerchantInfoAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       })
       // 退出登录
       .addCase(merchantLogoutAsync.fulfilled, (state) => {
