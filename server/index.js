@@ -17,18 +17,23 @@ const data = {
   merchants: [
     {
       id: 'merchant-001',
+      userId: 'user-001',
       phone: '13600136000',
       password: '123456',
-      shopName: '萌宠宠物服务中心',
-      ownerName: '张老板',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=merchant1',
+      name: '萌宠宠物服务中心',
+      logo: 'https://api.dicebear.com/7.x/avataaars/svg?seed=merchant1',
+      contactName: '张老板',
+      contactPhone: '13600136000',
+      businessLicense: '9111000000000000000',
+      businessLicenseImage: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400',
       address: '北京市朝阳区宠物街88号',
-      businessLicense: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400',
-      rating: 4.8,
-      totalOrders: 2847,
-      totalRevenue: 35678000,
-      status: 'active',
+      businessHours: '周一至周日 09:00-21:00',
       description: '专业宠物洗护、美容、寄养服务，10年行业经验',
+      status: 'approved',
+      rejectReason: '',
+      rating: 4.8,
+      totalSales: 2847,
+      totalRevenue: 35678000,
       createTime: '2025-12-01T00:00:00.000Z',
       updateTime: '2026-01-01T00:00:00.000Z',
     },
@@ -1280,7 +1285,7 @@ app.get('/api/statistics', authMiddleware, (req, res) => {
 
 // 商家注册
 app.post('/api/merchant/auth/register', (req, res) => {
-  const { phone, password, shopName, ownerName, address, description } = req.body;
+  const { phone, password, name, contactName, contactPhone, address, description, businessLicense, businessLicenseImage, businessHours } = req.body;
 
   const existingMerchant = data.merchants.find((m) => m.phone === phone);
   if (existingMerchant) {
@@ -1295,18 +1300,23 @@ app.post('/api/merchant/auth/register', (req, res) => {
   const now = new Date().toISOString();
   const newMerchant = {
     id: `merchant_${uuidv4()}`,
+    userId: `user_${uuidv4()}`,
     phone,
     password,
-    shopName,
-    ownerName,
-    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${shopName}`,
+    name,
+    logo: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`,
+    contactName,
+    contactPhone: contactPhone || phone,
+    businessLicense: businessLicense || '',
+    businessLicenseImage: businessLicenseImage || '',
     address: address || '',
-    businessLicense: '',
-    rating: 0,
-    totalOrders: 0,
-    totalRevenue: 0,
-    status: 'active',
+    businessHours: businessHours || '周一至周日 09:00-21:00',
     description: description || '',
+    status: 'pending',
+    rejectReason: '',
+    rating: 0,
+    totalSales: 0,
+    totalRevenue: 0,
     createTime: now,
     updateTime: now,
   };

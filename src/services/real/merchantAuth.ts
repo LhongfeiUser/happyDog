@@ -13,10 +13,10 @@ export const register = async (data: MerchantRegisterRequest): Promise<ApiRespon
 
 // 获取商家信息
 export const getMerchantInfo = async (): Promise<ApiResponse<Merchant>> => {
-  return request.get('/api/merchant/auth/info');
+  return request.get('/api/merchant/info');
 };
 
 // 更新商家信息
 export const updateMerchantInfo = async (data: Partial<Merchant>): Promise<ApiResponse<Merchant>> => {
-  return request.put('/api/merchant/auth/info', data);
+  return request.put('/api/merchant/info', data);
 };

@@ -34,7 +34,13 @@ const BasicInfoForm: React.FC = () => {
   };
 
   const handleReset = () => {
-    form.resetFields();
+    if (merchant) {
+      form.setFieldsValue({
+        name: merchant.name,
+        logo: merchant.logo,
+        description: merchant.description,
+      });
+    }
   };
 
   const uploadProps = {

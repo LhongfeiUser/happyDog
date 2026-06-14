@@ -31,7 +31,12 @@ const QualificationForm: React.FC = () => {
   };
 
   const handleReset = () => {
-    form.resetFields();
+    if (merchant) {
+      form.setFieldsValue({
+        businessLicense: merchant.businessLicense,
+        businessLicenseImage: merchant.businessLicenseImage,
+      });
+    }
   };
 
   const uploadProps = {

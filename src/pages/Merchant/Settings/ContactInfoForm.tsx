@@ -33,7 +33,13 @@ const ContactInfoForm: React.FC = () => {
   };
 
   const handleReset = () => {
-    form.resetFields();
+    if (merchant) {
+      form.setFieldsValue({
+        contactName: merchant.contactName,
+        contactPhone: merchant.contactPhone,
+        address: merchant.address,
+      });
+    }
   };
 
   return (

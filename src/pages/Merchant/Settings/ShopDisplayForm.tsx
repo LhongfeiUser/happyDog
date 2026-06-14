@@ -29,7 +29,11 @@ const ShopDisplayForm: React.FC = () => {
   };
 
   const handleReset = () => {
-    form.resetFields();
+    if (merchant) {
+      form.setFieldsValue({
+        businessHours: merchant.businessHours,
+      });
+    }
   };
 
   return (
