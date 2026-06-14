@@ -13,6 +13,7 @@ import MerchantDashboard from './pages/Merchant/Dashboard';
 import MerchantServices from './pages/Merchant/Services';
 import MerchantOrders from './pages/Merchant/Orders';
 import MerchantStatistics from './pages/Merchant/Statistics';
+import MerchantSettings from './pages/Merchant/Settings';
 import Home from './pages/Home';
 import { ServiceList, ServiceDetail } from './pages/Services';
 import { OrderList, OrderDetail, OrderReview } from './pages/Orders';
@@ -57,6 +58,7 @@ const App: React.FC = () => {
               <Route path="services" element={<MerchantServices />} />
               <Route path="orders" element={<MerchantOrders />} />
               <Route path="statistics" element={<MerchantStatistics />} />
+              <Route path="settings" element={<MerchantSettings />} />
             </Route>
 
             {/* 主布局 */}
