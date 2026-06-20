@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Card, Row, Col, Button, Tag, Rate, Space, Descriptions, message, Modal, Form, Input, DatePicker, Select, Spin } from 'antd';
-import { ClockCircleOutlined, ShoppingOutlined, EnvironmentOutlined, PhoneOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, ShoppingOutlined, PhoneOutlined } from '@ant-design/icons';
+import AddressPicker from '@/components/common/AddressPicker';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getServiceByIdAsync } from '../../store/slices/servicesSlice';
@@ -230,9 +231,19 @@ const ServiceDetail: React.FC = () => {
           <Form.Item
             name="address"
             label="服务地址"
-            rules={[{ required: true, message: '请输入服务地址' }]}
+            rules={[
+              { required: true, message: '请选择地址' },
+              {
+                validator: (_, value) => {
+                  if (value && typeof value === 'object' && !value.address) {
+                    return Promise.reject('请输入详细地址');
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
-            <Input prefix={<EnvironmentOutlined />} placeholder="请输入服务地址" />
+            <AddressPicker placeholder="请选择服务地址" />
           </Form.Item>
 
           <Form.Item
