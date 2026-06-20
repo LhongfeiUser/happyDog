@@ -158,8 +158,11 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
       viewMode: '2D',
     });
 
-    map.addControl(new AMap.Scale());
-    map.addControl(new AMap.ToolBar({ position: 'RT' }));
+    // 添加控件（使用 plugin 方式兼容 JSAPI 2.0）
+    map.plugin(['AMap.Scale', 'AMap.ToolBar'], () => {
+      map.addControl(new AMap.Scale());
+      map.addControl(new AMap.ToolBar({ position: 'RT' }));
+    });
 
     map.on('click', (e: any) => {
       if (disabled) return;

@@ -27,6 +27,8 @@ export const useGaodeMap = () => {
         'AMap.Geocoder',
         'AMap.PlaceSearch',
         'AMap.AutoComplete',
+        'AMap.Scale',
+        'AMap.ToolBar',
       ],
     })
       .then((AMap: any) => {
