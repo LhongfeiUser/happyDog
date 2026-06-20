@@ -1,3 +1,5 @@
+import type { AddressInfo } from '@/components/common/AddressPicker/types';
+
 // 统一API响应格式
 export interface ApiResponse<T> {
   code: 0 | number;
@@ -89,7 +91,7 @@ export interface Order {
   totalPrice: number;
   appointmentDate: string;
   appointmentTime: string;
-  address: string;
+  address: AddressInfo | string;
   contactPhone: string;
   remark: string;
   createTime: string;
@@ -150,7 +152,7 @@ export interface CreateOrderRequest {
   petId: string;
   appointmentDate: string;
   appointmentTime: string;
-  address: string;
+  address: AddressInfo;
   contactPhone: string;
   remark?: string;
 }

@@ -1,4 +1,5 @@
 // src/types/merchant.ts
+import type { AddressInfo } from '@/components/common/AddressPicker/types';
 
 /**
  * 商家信息
@@ -21,7 +22,7 @@ export interface Merchant {
   /** 营业执照图片 */
   businessLicenseImage: string;
   /** 店铺地址 */
-  address: string;
+  address: AddressInfo | string;
   /** 营业时间 */
   businessHours: string;
   /** 店铺描述 */
@@ -51,7 +52,7 @@ export interface MerchantRegisterRequest {
   contactPhone: string;
   businessLicense: string;
   businessLicenseImage: string;
-  address: string;
+  address: AddressInfo;
   businessHours: string;
   description: string;
 }
