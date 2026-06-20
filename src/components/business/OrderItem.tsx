@@ -6,6 +6,7 @@ import type { Order } from '../../types';
 import { formatPrice, formatDate, formatOrderStatus, formatServiceCategory, getImageUrl } from '../../utils';
 import { useAppDispatch } from '../../hooks';
 import { payOrderAsync, cancelOrderAsync, completeOrderAsync } from '../../store/slices/ordersSlice';
+import AddressDisplay from '@/components/common/AddressPicker/AddressDisplay';
 
 const { Text, Title } = Typography;
 
@@ -184,7 +185,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
             <Text type="secondary">
               预约时间：{order.appointmentDate} {order.appointmentTime}
             </Text>
-            <Text type="secondary">地址：{order.address}</Text>
+            <Text type="secondary">地址：<AddressDisplay value={order.address} short /></Text>
           </Space>
         </div>
         <div style={{ textAlign: 'right' }}>

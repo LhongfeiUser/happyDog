@@ -4,6 +4,7 @@ import { UserOutlined, PhoneOutlined, HomeOutlined, FileTextOutlined } from '@an
 import type { Order } from '../../../types';
 import OrderStatusTag from '../components/OrderStatusTag';
 import { formatPrice, formatDate } from '../../../utils';
+import AddressDisplay from '@/components/common/AddressPicker/AddressDisplay';
 
 interface OrderDetailProps {
   visible: boolean;
@@ -132,7 +133,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ visible, order, onClose }) =>
             <div style={{ marginBottom: 12 }}>
               <HomeOutlined style={{ marginRight: 8, color: '#8c8c8c' }} />
               <span style={{ fontWeight: 500 }}>服务地址：</span>
-              <span>{order.address}</span>
+              <span><AddressDisplay value={order.address} showIcon={false} /></span>
             </div>
           </Card>
         </Col>

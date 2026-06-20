@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getOrderByIdAsync, payOrderAsync, cancelOrderAsync, completeOrderAsync } from '../../store/slices/ordersSlice';
 import { formatPrice, formatDate, formatOrderStatus, formatServiceCategory, getImageUrl } from '../../utils';
+import AddressDisplay from '@/components/common/AddressPicker/AddressDisplay';
 
 const { Title, Text } = Typography;
 
@@ -128,7 +129,9 @@ const OrderDetail: React.FC = () => {
                 <Descriptions.Item label="下单时间">{formatDate(currentOrder.createTime)}</Descriptions.Item>
                 <Descriptions.Item label="预约日期">{currentOrder.appointmentDate}</Descriptions.Item>
                 <Descriptions.Item label="预约时间">{currentOrder.appointmentTime}</Descriptions.Item>
-                <Descriptions.Item label="服务地址" span={2}>{currentOrder.address}</Descriptions.Item>
+                <Descriptions.Item label="服务地址" span={2}>
+                  <AddressDisplay value={currentOrder.address} />
+                </Descriptions.Item>
                 <Descriptions.Item label="联系电话">{currentOrder.contactPhone}</Descriptions.Item>
                 <Descriptions.Item label="备注">{currentOrder.remark || '无'}</Descriptions.Item>
               </Descriptions>
