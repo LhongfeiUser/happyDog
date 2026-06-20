@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { Form, Input, Button, message, Card } from 'antd';
-import { UserOutlined, PhoneOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { updateMerchantInfoAsync } from '../../../store/slices/merchantAuthSlice';
+import AddressPicker from '@/components/common/AddressPicker';
 
 const ContactInfoForm: React.FC = () => {
   const [form] = Form.useForm();
@@ -11,10 +12,23 @@ const ContactInfoForm: React.FC = () => {
 
   useEffect(() => {
     if (merchant) {
+      // 兼容旧格式地址：字符串转结构化对象
+      let addrValue = merchant.address;
+      if (typeof addrValue === 'string') {
+        addrValue = {
+          province: '',
+          city: '',
+          district: '',
+          address: addrValue,
+          lng: 0,
+          lat: 0,
+          formatted: addrValue,
+        };
+      }
       form.setFieldsValue({
         contactName: merchant.contactName,
         contactPhone: merchant.contactPhone,
-        address: merchant.address,
+        address: addrValue,
       });
     }
   }, [merchant, form]);
@@ -85,16 +99,18 @@ const ContactInfoForm: React.FC = () => {
           name="address"
           label="店铺地址"
           rules={[
-            { required: true, message: '请输入店铺地址' },
-            { min: 5, max: 100, message: '店铺地址长度为5-100字符' },
+            { required: true, message: '请选择店铺地址' },
+            {
+              validator: (_, value) => {
+                if (value && typeof value === 'object' && (!value.address || !value.province)) {
+                  return Promise.reject('请选择省市区并输入详细地址');
+                }
+                return Promise.resolve();
+              },
+            },
           ]}
         >
-          <Input
-            prefix={<EnvironmentOutlined />}
-            placeholder="请输入店铺地址"
-            size="large"
-            style={{ borderRadius: 8 }}
-          />
+          <AddressPicker placeholder="请选择店铺地址" />
         </Form.Item>
 
         <Form.Item style={{ marginTop: 32 }}>
