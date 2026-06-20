@@ -3,7 +3,7 @@ import { Form, Input, Button, message, Card } from 'antd';
 import { UserOutlined, PhoneOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { updateMerchantInfoAsync } from '../../../store/slices/merchantAuthSlice';
-import AddressPicker from '@/components/common/AddressPicker';
+import AddressPicker from '../../../components/common/AddressPicker';
 
 const ContactInfoForm: React.FC = () => {
   const [form] = Form.useForm();

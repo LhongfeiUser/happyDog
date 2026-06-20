@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Card, Row, Col, Button, Tag, Rate, Space, Descriptions, message, Modal, Form, Input, DatePicker, Select, Spin } from 'antd';
 import { ClockCircleOutlined, ShoppingOutlined, PhoneOutlined } from '@ant-design/icons';
-import AddressPicker from '@/components/common/AddressPicker';
+import AddressPicker from '../../components/common/AddressPicker';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getServiceByIdAsync } from '../../store/slices/servicesSlice';

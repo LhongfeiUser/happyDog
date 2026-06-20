@@ -1,5 +1,5 @@
 // src/types/merchant.ts
-import type { AddressInfo } from '@/components/common/AddressPicker/types';
+import type { AddressInfo } from '../components/common/AddressPicker/types';
 
 /**
  * 商家信息

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { AddressInfo } from '@/components/common/AddressPicker/types';
+import type { AddressInfo } from '../components/common/AddressPicker/types';
 
 /**
  * 地址格式化工具

@@ -1,4 +1,4 @@
-import type { AddressInfo } from '@/components/common/AddressPicker/types';
+import type { AddressInfo } from '../components/common/AddressPicker/types';
 
 // 统一API响应格式
 export interface ApiResponse<T> {

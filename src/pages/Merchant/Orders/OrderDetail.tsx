@@ -4,7 +4,7 @@ import { UserOutlined, PhoneOutlined, HomeOutlined, FileTextOutlined } from '@an
 import type { Order } from '../../../types';
 import OrderStatusTag from '../components/OrderStatusTag';
 import { formatPrice, formatDate } from '../../../utils';
-import AddressDisplay from '@/components/common/AddressPicker/AddressDisplay';
+import AddressDisplay from '../../../components/common/AddressPicker/AddressDisplay';
 
 interface OrderDetailProps {
   visible: boolean;

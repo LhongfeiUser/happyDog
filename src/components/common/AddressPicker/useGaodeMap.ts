@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import AMapLoader from '@amap/amap-jsapi-loader';
-import { AMAP_KEY, isGaodeMapEnabled } from '@/config/env';
+import { AMAP_KEY, isGaodeMapEnabled } from '../../../config/env';
 
 let AMapInstance: any = null;
 

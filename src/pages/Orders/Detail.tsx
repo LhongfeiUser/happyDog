@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getOrderByIdAsync, payOrderAsync, cancelOrderAsync, completeOrderAsync } from '../../store/slices/ordersSlice';
 import { formatPrice, formatDate, formatOrderStatus, formatServiceCategory, getImageUrl } from '../../utils';
-import AddressDisplay from '@/components/common/AddressPicker/AddressDisplay';
+import AddressDisplay from '../../components/common/AddressPicker/AddressDisplay';
 
 const { Title, Text } = Typography;
 

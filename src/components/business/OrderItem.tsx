@@ -6,7 +6,7 @@ import type { Order } from '../../types';
 import { formatPrice, formatDate, formatOrderStatus, formatServiceCategory, getImageUrl } from '../../utils';
 import { useAppDispatch } from '../../hooks';
 import { payOrderAsync, cancelOrderAsync, completeOrderAsync } from '../../store/slices/ordersSlice';
-import AddressDisplay from '@/components/common/AddressPicker/AddressDisplay';
+import AddressDisplay from '../../components/common/AddressPicker/AddressDisplay';
 
 const { Text, Title } = Typography;
 

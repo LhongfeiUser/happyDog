@@ -27,7 +27,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { merchantRegisterAsync } from '../../../store/slices/merchantAuthSlice';
 import { isValidPhone } from '../../../utils';
-import AddressPicker from '@/components/common/AddressPicker';
+import AddressPicker from '../../../components/common/AddressPicker';
 import type { MerchantRegisterRequest } from '../../../types';
 
 const { Title, Text, Paragraph } = Typography;

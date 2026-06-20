@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import { EnvironmentOutlined } from '@ant-design/icons';
 import type { AddressDisplayProps } from './types';
-import { useAddress } from '@/hooks/useAddress';
+import { useAddress } from '../../../hooks/useAddress';
 
 const AddressDisplay: React.FC<AddressDisplayProps> = ({
   value,
