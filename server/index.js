@@ -8,6 +8,31 @@ const app = express();
 const PORT = 3000;
 const JWT_SECRET = 'pet-service-platform-secret-key';
 
+// 地址格式化：确保 address 始终是结构化对象
+function normalizeAddress(addr) {
+  if (!addr) return null;
+  if (typeof addr === 'string') {
+    return {
+      province: '',
+      city: '',
+      district: '',
+      address: addr,
+      lng: 0,
+      lat: 0,
+      formatted: addr,
+    };
+  }
+  return {
+    province: addr.province || '',
+    city: addr.city || '',
+    district: addr.district || '',
+    address: addr.address || '',
+    lng: addr.lng || 0,
+    lat: addr.lat || 0,
+    formatted: addr.formatted || `${addr.province || ''}${addr.city || ''}${addr.district || ''}${addr.address || ''}`,
+  };
+}
+
 // 中间件
 app.use(cors());
 app.use(express.json());
@@ -678,7 +703,7 @@ app.post('/api/orders', authMiddleware, (req, res) => {
     totalPrice: service.price,
     appointmentDate,
     appointmentTime,
-    address,
+    address: normalizeAddress(address),
     contactPhone,
     remark: remark || '',
     createTime: now,
@@ -715,7 +740,10 @@ app.get('/api/orders', authMiddleware, (req, res) => {
 
   const start = (page - 1) * pageSize;
   const end = start + parseInt(pageSize);
-  const list = filteredOrders.slice(start, end);
+  const list = filteredOrders.slice(start, end).map((o) => ({
+    ...o,
+    address: normalizeAddress(o.address),
+  }));
 
   res.json({
     code: 0,
@@ -742,6 +770,8 @@ app.get('/api/orders/:id', authMiddleware, (req, res) => {
       timestamp: Date.now(),
     });
   }
+
+  order.address = normalizeAddress(order.address);
 
   res.json({
     code: 0,
@@ -1309,7 +1339,7 @@ app.post('/api/merchant/auth/register', (req, res) => {
     contactPhone: contactPhone || phone,
     businessLicense: businessLicense || '',
     businessLicenseImage: businessLicenseImage || '',
-    address: address || '',
+    address: normalizeAddress(address) || { province: '', city: '', district: '', address: '', lng: 0, lat: 0, formatted: '' },
     businessHours: businessHours || '周一至周日 09:00-21:00',
     description: description || '',
     status: 'pending',
@@ -1380,6 +1410,7 @@ app.get('/api/merchant/info', merchantAuth, (req, res) => {
   }
 
   const { password: _, ...merchantWithoutPassword } = merchant;
+  merchantWithoutPassword.address = normalizeAddress(merchant.address);
 
   res.json({
     code: 0,
@@ -1412,7 +1443,11 @@ app.put('/api/merchant/info', merchantAuth, (req, res) => {
   const updates = {};
   allowedFields.forEach(field => {
     if (req.body[field] !== undefined) {
-      updates[field] = req.body[field];
+      if (field === 'address') {
+        updates[field] = normalizeAddress(req.body[field]);
+      } else {
+        updates[field] = req.body[field];
+      }
     }
   });
 
