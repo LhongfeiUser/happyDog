@@ -27,6 +27,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { merchantRegisterAsync } from '../../../store/slices/merchantAuthSlice';
 import { isValidPhone } from '../../../utils';
+import AddressPicker from '@/components/common/AddressPicker';
 import type { MerchantRegisterRequest } from '../../../types';
 
 const { Title, Text, Paragraph } = Typography;
@@ -86,7 +87,7 @@ const MerchantRegister: React.FC = () => {
     { label: '联系人', value: formData.contactName, icon: <UserOutlined /> },
     { label: '联系电话', value: formData.contactPhone, icon: <PhoneOutlined /> },
     { label: '营业时间', value: formData.businessHours, icon: <ClockCircleOutlined /> },
-    { label: '店铺地址', value: formData.address, icon: <EnvironmentOutlined /> },
+    { label: '店铺地址', value: formData.address?.formatted || formData.address, icon: <EnvironmentOutlined /> },
     { label: '店铺描述', value: formData.description, icon: <FileTextOutlined /> },
     { label: '营业执照号', value: formData.businessLicense, icon: <FileTextOutlined /> },
   ];
@@ -213,13 +214,19 @@ const MerchantRegister: React.FC = () => {
                   <Form.Item
                     name="address"
                     label="店铺地址"
-                    rules={requiredValidationRules}
+                    rules={[
+                      { required: true, message: '请选择店铺地址' },
+                      {
+                        validator: (_, value) => {
+                          if (value && typeof value === 'object' && (!value.address || !value.province)) {
+                            return Promise.reject('请选择省市区并输入详细地址');
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
                   >
-                    <Input
-                      prefix={<EnvironmentOutlined style={{ color: '#FFB74D' }} />}
-                      placeholder="请输入详细地址"
-                      style={{ borderRadius: 12 }}
-                    />
+                    <AddressPicker placeholder="请选择店铺地址" />
                   </Form.Item>
                 </Col>
               </Row>
