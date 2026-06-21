@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Select, Input, Tooltip } from 'antd';
+import { Select, Input } from 'antd';
 import { EnvironmentOutlined, AimOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useGaodeMap } from './useGaodeMap';
 import './index.css';
@@ -22,13 +22,20 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   const [lng, setLng] = useState(value?.lng || 0);
   const [lat, setLat] = useState(value?.lat || 0);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<AMap.Poi[]>([]);
   const [searching, setSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<any>(null);
-  const markerInstance = useRef<any>(null);
-  const placeSearchRef = useRef<any>(null);
+  const mapInstance = useRef<AMap.Map | null>(null);
+  const markerInstance = useRef<AMap.Marker | null>(null);
+  const placeSearchRef = useRef<AMap.PlaceSearch | null>(null);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 用 ref 跟踪最新状态，避免闭包问题
+  const stateRef = useRef({ province, city, district, detailAddress });
+  useEffect(() => {
+    stateRef.current = { province, city, district, detailAddress };
+  });
 
   // 省市区数据
   const [provinceOptions, setProvinceOptions] = useState<{ label: string; value: string; cityList?: any[] }[]>([]);
@@ -38,18 +45,19 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   // 触发 onChange
   const triggerChange = useCallback(
     (addr: Partial<AddressInfo>) => {
+      const current = stateRef.current;
       const newValue: AddressInfo = {
-        province: addr.province ?? province,
-        city: addr.city ?? city,
-        district: addr.district ?? district,
-        address: addr.address ?? detailAddress,
+        province: addr.province ?? current.province,
+        city: addr.city ?? current.city,
+        district: addr.district ?? current.district,
+        address: addr.address ?? current.detailAddress,
         lng: addr.lng ?? lng,
         lat: addr.lat ?? lat,
-        formatted: `${addr.province ?? province}${addr.city ?? city}${addr.district ?? district}${addr.address ?? detailAddress}`,
+        formatted: `${addr.province ?? current.province}${addr.city ?? current.city}${addr.district ?? current.district}${addr.address ?? current.detailAddress}`,
       };
       onChange?.(newValue);
     },
-    [province, city, district, detailAddress, lng, lat, onChange],
+    [lng, lat, onChange],
   );
 
   // 加载行政区划
@@ -64,11 +72,11 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     });
 
     districtSearch.search('中国', (status: string, result: any) => {
-      if (status === 'complete' && result.districtList) {
+      if (status === 'complete' && result.districtList?.[0]) {
         const provinces = result.districtList[0].districtList.map((d: any) => ({
           label: d.name,
           value: d.name,
-          cityList: d.districtList,
+          cityList: d.districtList || [],
         }));
         setProvinceOptions(provinces);
       }
@@ -89,7 +97,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
         provinceData.cityList.map((c: any) => ({
           label: c.name,
           value: c.name,
-          districtList: c.districtList,
+          districtList: c.districtList || [],
         })),
       );
     }
@@ -124,7 +132,7 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     }
   };
 
-  // 逆地理编码
+  // 逆地理编码（使用 ref 避免闭包问题）
   const reverseGeocode = useCallback(
     (longitude: number, latitude: number) => {
       if (!getAMap()) return;
@@ -133,18 +141,45 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
 
       geocoder.getAddress([longitude, latitude], (status: string, result: any) => {
         if (status === 'complete' && result.regeocode) {
-          const addr = result.regeocode.addressComponent;
-          if (addr.province && !province) setProvince(addr.province);
-          if (addr.city && !city) setCity(addr.city.length > 0 ? addr.city : addr.province);
-          if (addr.district && !district) setDistrict(addr.district);
-          if (addr.street || addr.township) {
-            const streetAddr = addr.township + (addr.street || '') + (addr.streetNumber || '');
-            if (!detailAddress) setDetailAddress(streetAddr);
+          const comp = result.regeocode.addressComponent;
+          if (comp.province && !stateRef.current.province) setProvince(comp.province);
+          if (comp.city && !stateRef.current.city) {
+            setCity(comp.city.length > 0 ? comp.city : comp.province);
           }
+          if (comp.district && !stateRef.current.district) setDistrict(comp.district);
+          const streetAddr = (comp.township || '') + (comp.street || '') + (comp.streetNumber || '');
+          if (streetAddr && !stateRef.current.detailAddress) setDetailAddress(streetAddr);
         }
       });
     },
-    [getAMap, province, city, district, detailAddress],
+    [getAMap],
+  );
+
+  // 在地图上放置标记
+  const placeMarker = useCallback(
+    (map: AMap.Map, mapLng: number, mapLat: number) => {
+      if (markerInstance.current) {
+        markerInstance.current.setPosition([mapLng, mapLat]);
+      } else {
+        const AMap = getAMap()!;
+        const marker = new AMap.Marker({
+          position: [mapLng, mapLat],
+          draggable: true,
+          cursor: 'move',
+        });
+        marker.setMap(map);
+
+        marker.on('dragend', () => {
+          const pos = marker.getPosition();
+          setLng(pos.lng);
+          setLat(pos.lat);
+          reverseGeocode(pos.lng, pos.lat);
+        });
+
+        markerInstance.current = marker;
+      }
+    },
+    [getAMap, reverseGeocode],
   );
 
   // 初始化地图
@@ -152,43 +187,40 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     if (!loaded || !mapRef.current || !getAMap() || mapInstance.current) return;
 
     const AMap = getAMap()!;
+    const initialLng = lng && lat ? lng : 116.397428;
+    const initialLat = lng && lat ? lat : 39.90923;
+
     const map = new AMap.Map(mapRef.current, {
       zoom: 15,
-      center: lng && lat ? [lng, lat] : [116.397428, 39.90923],
+      center: [initialLng, initialLat],
       viewMode: '2D',
     });
 
-    // 添加控件（使用 plugin 方式兼容 JSAPI 2.0）
+    // 添加控件
     map.plugin(['AMap.Scale', 'AMap.ToolBar'], () => {
-      map.addControl(new AMap.Scale());
-      map.addControl(new AMap.ToolBar({ position: 'RT' }));
+      try {
+        map.addControl(new AMap.Scale());
+        map.addControl(new AMap.ToolBar({ position: 'RT' }));
+      } catch {
+        // 控件加载失败不影响功能
+      }
     });
 
+    // 点击地图选点
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     map.on('click', (e: any) => {
       if (disabled) return;
-      const clickedLng = e.lnglat.lng;
-      const clickedLat = e.lnglat.lat;
+      // JSAPI 2.0 兼容：从事件中提取经纬度
+      const lnglat = e.lnglat;
+      if (!lnglat) return;
+
+      const clickedLng = lnglat.lng ?? lnglat.getLng?.();
+      const clickedLat = lnglat.lat ?? lnglat.getLat?.();
+      if (clickedLng == null || clickedLat == null) return;
+
       setLng(clickedLng);
       setLat(clickedLat);
-
-      if (markerInstance.current) {
-        markerInstance.current.setPosition([clickedLng, clickedLat]);
-      } else {
-        markerInstance.current = new AMap.Marker({
-          position: [clickedLng, clickedLat],
-          draggable: true,
-          cursor: 'move',
-        });
-        markerInstance.current.setMap(map);
-
-        markerInstance.current.on('dragend', () => {
-          const pos = markerInstance.current.getPosition();
-          setLng(pos.lng);
-          setLat(pos.lat);
-          reverseGeocode(pos.lng, pos.lat);
-        });
-      }
-
+      placeMarker(map, clickedLng, clickedLat);
       reverseGeocode(clickedLng, clickedLat);
     });
 
@@ -197,68 +229,74 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     return () => {
       map.destroy();
       mapInstance.current = null;
+      markerInstance.current = null;
     };
-  }, [loaded, getAMap, disabled, lng, lat, reverseGeocode]);
+  }, [loaded, getAMap, disabled, lng, lat, placeMarker, reverseGeocode]);
 
-  // 搜索地址
+  // 搜索地址（防抖）
   const handleSearch = useCallback(
     (keyword: string) => {
       if (!keyword.trim() || !getAMap()) return;
-      setSearching(true);
 
-      const AMap = getAMap()!;
-      if (!placeSearchRef.current) {
-        placeSearchRef.current = new AMap.PlaceSearch({
-          pageSize: 10,
-          pageIndex: 1,
-        });
+      // 清除之前的定时器
+      if (searchTimerRef.current) {
+        clearTimeout(searchTimerRef.current);
       }
 
-      placeSearchRef.current.search(keyword, (status: string, result: any) => {
-        setSearching(false);
-        if (status === 'complete' && result.info === 'OK') {
-          setSearchResults(result.poiList.pois || []);
-          setShowResults(true);
-        } else {
-          setSearchResults([]);
-          setShowResults(false);
+      setSearching(true);
+      searchTimerRef.current = setTimeout(() => {
+        const AMap = getAMap()!;
+        if (!placeSearchRef.current) {
+          placeSearchRef.current = new AMap.PlaceSearch({
+            pageSize: 10,
+            pageIndex: 1,
+            city: '全国',
+          });
         }
-      });
+
+        placeSearchRef.current!.search(keyword, (status: string, result: AMap.SearchResult) => {
+          setSearching(false);
+          if (status === 'complete' && result.info === 'OK' && result.poiList) {
+            setSearchResults(result.poiList.pois || []);
+            setShowResults(true);
+          } else {
+            setSearchResults([]);
+            setShowResults(false);
+          }
+        });
+      }, 400);
     },
     [getAMap],
   );
 
   // 选择搜索结果
   const handleSelectSearchResult = (poi: any) => {
-    const poiLng = poi.location?.lng || 0;
-    const poiLat = poi.location?.lat || 0;
+    const location = poi.location || {};
+    const poiLng = location.lng || 0;
+    const poiLat = location.lat || 0;
 
     setSearchKeyword(poi.name);
     setShowResults(false);
 
+    // 更新地图位置
     if (mapInstance.current && poiLng && poiLat) {
       mapInstance.current.setZoomAndCenter(17, [poiLng, poiLat]);
-
-      if (markerInstance.current) {
-        markerInstance.current.setPosition([poiLng, poiLat]);
-      } else {
-        const AMap = getAMap()!;
-        markerInstance.current = new AMap.Marker({
-          position: [poiLng, poiLat],
-          draggable: true,
-        });
-        markerInstance.current.setMap(mapInstance.current);
-      }
-
+      placeMarker(mapInstance.current, poiLng, poiLat);
       setLng(poiLng);
       setLat(poiLat);
     }
 
+    // 解析地址组件
+    const poiProvince = poi.p || poi.province || '';
+    const poiCity = poi.c || poi.city || poi.cityname || poiProvince;
+    const poiDistrict = poi.adname || poi.district || '';
+    const poiAddress = poi.address || '';
+
     triggerChange({
-      province: poi.poi?.district?.split('省')[0] + '省' || province,
-      city: poi.cityname || city,
-      district: poi.adname || district,
-      address: poi.address || detailAddress,
+      province: poiProvince,
+      city: poiCity,
+      district: poiDistrict,
+      address: poiAddress,
       lng: poiLng,
       lat: poiLat,
     });
