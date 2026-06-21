@@ -28,7 +28,6 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<AMap.Map | null>(null);
   const markerInstance = useRef<AMap.Marker | null>(null);
-  const placeSearchRef = useRef<AMap.PlaceSearch | null>(null);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 用 ref 跟踪最新状态，避免闭包问题
@@ -233,10 +232,10 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
     };
   }, [loaded, getAMap, disabled, lng, lat, placeMarker, reverseGeocode]);
 
-  // 搜索地址（防抖）
+  // 搜索地址（使用高德 REST API）
   const handleSearch = useCallback(
     (keyword: string) => {
-      if (!keyword.trim() || !getAMap()) return;
+      if (!keyword.trim()) return;
 
       // 清除之前的定时器
       if (searchTimerRef.current) {
@@ -244,29 +243,50 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
       }
 
       setSearching(true);
-      searchTimerRef.current = setTimeout(() => {
-        const AMap = getAMap()!;
-        if (!placeSearchRef.current) {
-          placeSearchRef.current = new AMap.PlaceSearch({
-            pageSize: 10,
-            pageIndex: 1,
-            city: '全国',
-          });
-        }
+      searchTimerRef.current = setTimeout(async () => {
+        try {
+          // 使用高德 REST Web Service API 搜索
+          const amapKey = import.meta.env.VITE_AMAP_KEY;
+          const resp = await fetch(
+            `https://restapi.amap.com/v3/place/text?key=${amapKey}&keywords=${encodeURIComponent(keyword)}&city=&citylimit=false&offset=0&page=1&extensions=base`
+          );
+          const data = await resp.json();
 
-        placeSearchRef.current!.search(keyword, (status: string, result: AMap.SearchResult) => {
-          setSearching(false);
-          if (status === 'complete' && result.info === 'OK' && result.poiList) {
-            setSearchResults(result.poiList.pois || []);
+          if (data.status === '1' && data.pois && data.pois.length > 0) {
+            // 将 REST API 返回格式转换为 POI 对象
+            const pois = data.pois.map((p: any) => ({
+              id: p.id,
+              name: p.name,
+              address: p.address || '',
+              location: (() => {
+                const loc = p.location || '';
+                const [lng, lat] = loc.split(',').map(Number);
+                return { lng: lng || 0, lat: lat || 0, getLng: () => lng || 0, getLat: () => lat || 0 };
+              })(),
+              pname: p.pname || '',
+              cityname: p.cityname || '',
+              adname: p.adname || '',
+              p: p.pname || '',
+              c: p.cityname || '',
+              province: p.pname || '',
+              city: p.cityname || '',
+              district: p.adname || '',
+            }));
+            setSearchResults(pois);
             setShowResults(true);
           } else {
             setSearchResults([]);
             setShowResults(false);
           }
-        });
+        } catch {
+          setSearchResults([]);
+          setShowResults(false);
+        } finally {
+          setSearching(false);
+        }
       }, 400);
     },
-    [getAMap],
+    [],
   );
 
   // 选择搜索结果
@@ -286,11 +306,37 @@ const AddressPicker: React.FC<AddressPickerProps> = ({
       setLat(poiLat);
     }
 
-    // 解析地址组件
-    const poiProvince = poi.p || poi.province || '';
-    const poiCity = poi.c || poi.city || poi.cityname || poiProvince;
+    // 解析地址组件（兼容 REST API 和 JSAPI 两种格式）
+    const poiProvince = poi.pname || poi.p || poi.province || '';
+    const poiCity = poi.cityname || poi.c || poi.city || poiProvince;
     const poiDistrict = poi.adname || poi.district || '';
     const poiAddress = poi.address || '';
+
+    // 设置省市区值，并加载对应的级联选项
+    setProvince(poiProvince);
+    setCity(poiCity);
+    setDistrict(poiDistrict);
+
+    // 从已加载的 provinceOptions 中查找对应的城市和区县选项
+    const provData = provinceOptions.find(p => p.value === poiProvince);
+    if (provData?.cityList) {
+      const cityOpts = provData.cityList.map((c: { name: string; districtList?: { name: string }[] }) => ({
+        label: c.name,
+        value: c.name,
+        districtList: c.districtList || [],
+      }));
+      setCityOptions(cityOpts);
+
+      const cityData = cityOpts.find((c: { value: string }) => c.value === poiCity);
+      if (cityData?.districtList) {
+        setDistrictOptions(
+          cityData.districtList.map((d: { name: string }) => ({
+            label: d.name,
+            value: d.name,
+          }))
+        );
+      }
+    }
 
     triggerChange({
       province: poiProvince,

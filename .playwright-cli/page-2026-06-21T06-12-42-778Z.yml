@@ -1,0 +1,237 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6] [cursor=pointer]:
+          - generic [ref=e7]: 🐾
+          - text: 宠物服务平台
+        - menu [ref=e8]:
+          - menuitem "home 首页" [ref=e9] [cursor=pointer]:
+            - img "home" [ref=e10]:
+              - img [ref=e11]
+            - text: 首页
+          - menuitem "shopping 服务" [ref=e13] [cursor=pointer]:
+            - img "shopping" [ref=e14]:
+              - img [ref=e15]
+            - text: 服务
+          - menuitem "heart 订单" [ref=e17] [cursor=pointer]:
+            - img "heart" [ref=e18]:
+              - img [ref=e19]
+            - text: 订单
+          - menuitem "star 评价" [ref=e21] [cursor=pointer]:
+            - img "star" [ref=e22]:
+              - img [ref=e23]
+            - text: 评价
+          - menuitem "customer-service 售后" [ref=e25] [cursor=pointer]:
+            - img "customer-service" [ref=e26]:
+              - img [ref=e27]
+            - text: 售后
+          - menuitem "bar-chart 数据统计" [ref=e29] [cursor=pointer]:
+            - img "bar-chart" [ref=e30]:
+              - img [ref=e31]
+            - text: 数据统计
+          - menuitem [disabled]:
+            - img:
+              - img
+      - generic [ref=e34] [cursor=pointer]:
+        - img [ref=e37]
+        - generic [ref=e38]: 爱宠达人
+    - main [ref=e39]:
+      - generic [ref=e587]:
+        - generic [ref=e588]:
+          - img "基础洗护套餐" [ref=e593]
+          - generic [ref=e596]:
+            - generic [ref=e597]: 洗护
+            - heading "基础洗护套餐" [level=2] [ref=e598]
+            - generic [ref=e599]: 包含洗澡、吹干、基础毛发护理，适合短毛犬猫
+            - strong [ref=e602]: ¥98.00
+            - table [ref=e605]:
+              - rowgroup [ref=e606]:
+                - 'row "时长 : clock-circle 60分钟" [ref=e607]':
+                  - 'cell "时长 : clock-circle 60分钟" [ref=e608]':
+                    - generic [ref=e609]:
+                      - generic [ref=e610]: "时长 :"
+                      - generic [ref=e611]:
+                        - img "clock-circle" [ref=e612]:
+                          - img [ref=e613]
+                        - text: 60分钟
+                - 'row "评分 : star star star star star star star star star star 4.8分" [ref=e616]':
+                  - 'cell "评分 : star star star star star star star star star star 4.8分" [ref=e617]':
+                    - generic [ref=e618]:
+                      - generic [ref=e619]: "评分 :"
+                      - generic [ref=e620]:
+                        - list [ref=e621]:
+                          - listitem [ref=e622]:
+                            - radio "star star" [checked] [ref=e623]:
+                              - img "star" [ref=e625]:
+                                - img [ref=e626]
+                              - img "star" [ref=e629]:
+                                - img [ref=e630]
+                          - listitem [ref=e632]:
+                            - radio "star star" [checked] [ref=e633]:
+                              - img "star" [ref=e635]:
+                                - img [ref=e636]
+                              - img "star" [ref=e639]:
+                                - img [ref=e640]
+                          - listitem [ref=e642]:
+                            - radio "star star" [checked] [ref=e643]:
+                              - img "star" [ref=e645]:
+                                - img [ref=e646]
+                              - img "star" [ref=e649]:
+                                - img [ref=e650]
+                          - listitem [ref=e652]:
+                            - radio "star star" [checked] [ref=e653]:
+                              - img "star" [ref=e655]:
+                                - img [ref=e656]
+                              - img "star" [ref=e659]:
+                                - img [ref=e660]
+                          - listitem [ref=e662]:
+                            - radio "star star" [checked] [ref=e663]:
+                              - img "star" [ref=e665]:
+                                - img [ref=e666]
+                              - img "star" [ref=e669]:
+                                - img [ref=e670]
+                        - generic [ref=e672]: 4.8分
+                - 'row "销量 : shopping 已售1256次" [ref=e673]':
+                  - 'cell "销量 : shopping 已售1256次" [ref=e674]':
+                    - generic [ref=e675]:
+                      - generic [ref=e676]: "销量 :"
+                      - generic [ref=e677]:
+                        - img "shopping" [ref=e678]:
+                          - img [ref=e679]
+                        - text: 已售1256次
+            - button "立即预约" [ref=e681] [cursor=pointer]:
+              - generic [ref=e682]: 立即预约
+        - generic [ref=e684]:
+          - heading "用户评价 (1)" [level=4] [ref=e685]
+          - generic [ref=e686]:
+            - generic [ref=e687]:
+              - generic [ref=e688]:
+                - list [ref=e690]:
+                  - listitem [ref=e691]:
+                    - radio "star star" [checked] [ref=e692]:
+                      - img "star" [ref=e694]:
+                        - img [ref=e695]
+                      - img "star" [ref=e698]:
+                        - img [ref=e699]
+                  - listitem [ref=e701]:
+                    - radio "star star" [checked] [ref=e702]:
+                      - img "star" [ref=e704]:
+                        - img [ref=e705]
+                      - img "star" [ref=e708]:
+                        - img [ref=e709]
+                  - listitem [ref=e711]:
+                    - radio "star star" [checked] [ref=e712]:
+                      - img "star" [ref=e714]:
+                        - img [ref=e715]
+                      - img "star" [ref=e718]:
+                        - img [ref=e719]
+                  - listitem [ref=e721]:
+                    - radio "star star" [checked] [ref=e722]:
+                      - img "star" [ref=e724]:
+                        - img [ref=e725]
+                      - img "star" [ref=e728]:
+                        - img [ref=e729]
+                  - listitem [ref=e731]:
+                    - radio "star star" [checked] [ref=e732]:
+                      - img "star" [ref=e734]:
+                        - img [ref=e735]
+                      - img "star" [ref=e738]:
+                        - img [ref=e739]
+                - generic [ref=e742]: 5分
+              - generic [ref=e743]: 2026-06-10 20:00:00
+            - generic [ref=e744]: 服务非常专业，我家旺财洗完澡后毛发柔顺有光泽，工作人员也很温柔！
+    - contentinfo [ref=e49]:
+      - generic [ref=e50]: 🐾宠物服务平台
+      - generic [ref=e51]: 让每一位宠物都能享受到专业、贴心的服务
+      - generic [ref=e52]: © 2026 宠物服务平台 - 爱宠人士的首选
+  - generic [ref=e745]:
+    - dialog "预约服务":
+      - generic [ref=e746]:
+        - button "Close" [active] [ref=e747] [cursor=pointer]:
+          - generic "关闭" [ref=e748]:
+            - img "close" [ref=e749]:
+              - img [ref=e750]
+        - generic [ref=e753]: 预约服务
+        - generic [ref=e755]:
+          - generic [ref=e757]:
+            - generic "选择宠物" [ref=e759]: "* 选择宠物"
+            - generic [ref=e763] [cursor=pointer]:
+              - generic [ref=e764]:
+                - generic: 请选择您的宠物
+                - combobox "* 选择宠物" [ref=e765]
+              - img "down" [ref=e767]:
+                - img [ref=e768]
+          - generic [ref=e771]:
+            - generic "预约日期" [ref=e773]: "* 预约日期"
+            - generic [ref=e778]:
+              - textbox "* 预约日期" [ref=e779]:
+                - /placeholder: 请选择日期
+              - generic:
+                - img:
+                  - img
+          - generic [ref=e781]:
+            - generic "预约时间" [ref=e783]: "* 预约时间"
+            - generic [ref=e787] [cursor=pointer]:
+              - generic [ref=e788]:
+                - generic: 请选择预约时间
+                - combobox "* 预约时间" [ref=e789]
+              - img "down" [ref=e791]:
+                - img [ref=e792]
+          - generic [ref=e795]:
+            - generic "服务地址" [ref=e797]: "* 服务地址"
+            - generic [ref=e801]:
+              - generic [ref=e803]:
+                - img "environment" [ref=e805]:
+                  - img [ref=e806]
+                - textbox "搜索地点..." [ref=e808]
+              - generic [ref=e810]:
+                - generic [ref=e811]:
+                  - combobox [ref=e813]
+                  - img "down" [ref=e815]:
+                    - img [ref=e816]
+                - generic [ref=e818]:
+                  - combobox [disabled] [ref=e820]
+                  - img "down" [ref=e822]:
+                    - img [ref=e823]
+                - generic [ref=e825]:
+                  - combobox [disabled] [ref=e827]
+                  - img "down" [ref=e829]:
+                    - img [ref=e830]
+              - generic [ref=e832]:
+                - generic [ref=e833]:
+                  - img "aim" [ref=e834]:
+                    - img [ref=e835]
+                  - text: 点击地图选择位置
+                - generic [ref=e838]:
+                  - iframe [ref=e839]:
+                    
+                  - generic:
+                    - generic:
+                      - generic: 500 米
+                    - generic [ref=e843]:
+                      - generic [ref=e844]: +
+                      - generic [ref=e845]: "-"
+                  - generic:
+                    - img
+                  - generic [ref=e846]: © 2026 AutoNavi - GS(2025)5996号
+              - generic [ref=e848]:
+                - img "environment" [ref=e850]:
+                  - img [ref=e851]
+                - textbox "详细地址（街道、门牌号等）" [ref=e853]
+          - generic [ref=e855]:
+            - generic "联系电话" [ref=e857]: "* 联系电话"
+            - generic [ref=e861]:
+              - img "phone" [ref=e863]:
+                - img [ref=e864]
+              - textbox "* 联系电话" [ref=e866]:
+                - /placeholder: 请输入联系电话
+          - generic [ref=e868]:
+            - generic "备注" [ref=e870]
+            - textbox "备注" [ref=e874]:
+              - /placeholder: 请输入备注信息（选填）
+          - generic [ref=e880]:
+            - button "取 消" [ref=e882] [cursor=pointer]:
+              - generic [ref=e883]: 取 消
+            - button "确认下单" [ref=e885] [cursor=pointer]:
+              - generic [ref=e886]: 确认下单

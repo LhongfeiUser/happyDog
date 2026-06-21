@@ -25,8 +25,6 @@ export const useGaodeMap = () => {
       plugins: [
         'AMap.DistrictSearch',
         'AMap.Geocoder',
-        'AMap.PlaceSearch',
-        'AMap.AutoComplete',
         'AMap.Scale',
         'AMap.ToolBar',
       ],
